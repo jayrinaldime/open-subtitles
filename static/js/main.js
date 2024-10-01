@@ -112,7 +112,20 @@ function sendAudioToServer(audioBlob) {
 
 function addTranscriptionToUI(text) {
     const container = document.getElementById('transcriptionContainer');
-    const paragraph = document.createElement('p');
-    paragraph.textContent = text;
-    container.appendChild(paragraph);
+    const transcriptionElement = document.createElement('div');
+    transcriptionElement.className = 'transcription-entry';
+    
+    const timestamp = new Date().toLocaleTimeString();
+    const timestampElement = document.createElement('span');
+    timestampElement.className = 'timestamp';
+    timestampElement.textContent = timestamp;
+    
+    const textElement = document.createElement('span');
+    textElement.className = 'transcription-text';
+    textElement.textContent = text;
+    
+    transcriptionElement.appendChild(timestampElement);
+    transcriptionElement.appendChild(textElement);
+    
+    container.insertBefore(transcriptionElement, container.firstChild);
 }
