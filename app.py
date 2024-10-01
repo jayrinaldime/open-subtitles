@@ -50,19 +50,21 @@ from dotenv import load_dotenv
 async def transcribe(audio: UploadFile = File(...)):
     supported_formats = ['flac', 'm4a', 'mp3', 'mp4', 'mpeg', 'mpga', 'oga', 'ogg', 'wav', 'webm']
     file_extension = audio.filename.split('.')[-1].lower()
-
+    print(file_extension)
     if file_extension not in supported_formats:
-        raise HTTPException(status_code=400, detail=f"Unsupported file format. Supported formats are: {', '.join(supported_formats)}")
+       raise HTTPException(status_code=400, detail=f"Unsupported file format. Supported formats are: {', '.join(supported_formats)} {file_extension}")
 
-    try:
+    if True:
+        print(audio.file)
+        # transcription = "hello"
         transcription = client.audio.transcriptions.create(
             model="whisper-1",
             file=audio.file,
             response_format="text"
         )
         return {"text": transcription}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
