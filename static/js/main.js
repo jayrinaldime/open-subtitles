@@ -28,7 +28,7 @@ function stopRecording() {
 function sendAudioToServer() {
     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     const formData = new FormData();
-    formData.append('audio', audioBlob);
+    formData.append('audio', audioBlob, 'words.wav');
 
     fetch('/transcribe', {
         method: 'POST',
