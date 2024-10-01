@@ -13,12 +13,8 @@ RUN pip install --no-cache-dir -r requirements-lock.txt
 # Copy the rest of the application code
 COPY . .
 
-# Expose the port the app runs on
-EXPOSE 5000
-
-# Set environment variables
-ENV FLASK_APP=app.py
-ENV FLASK_RUN_HOST=0.0.0.0
+# Expose the port the app runs on (FastAPI default is 8000)
+EXPOSE 8000
 
 # Run the application
-CMD ["flask", "run"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
