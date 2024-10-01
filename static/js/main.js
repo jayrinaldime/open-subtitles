@@ -118,7 +118,7 @@ function addTranscriptionToUI(text) {
     const timestamp = new Date().toLocaleTimeString();
     const timestampElement = document.createElement('span');
     timestampElement.className = 'timestamp';
-    timestampElement.textContent = timestamp;
+    timestampElement.textContent = timestamp + ': ';
     
     const textElement = document.createElement('span');
     textElement.className = 'transcription-text';

@@ -44,9 +44,19 @@ button:disabled {
     padding-top: 20px;
 }
 
-#transcriptionContainer p {
+.transcription-entry {
     background-color: #e9e9e9;
     padding: 10px;
     border-radius: 4px;
     margin-bottom: 10px;
+}
+
+.timestamp {
+    font-weight: bold;
+    color: #555;
+    margin-right: 10px;
+}
+
+.transcription-text {
+    color: #333;
 }
