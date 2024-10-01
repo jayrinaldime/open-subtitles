@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
 import os
 from pydantic import BaseModel
@@ -10,6 +11,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = FastAPI()
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Initialize OpenAI client
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
@@ -25,16 +35,34 @@ async def index():
 class TranscriptionResponse(BaseModel):
     text: str
 
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
+from openai import OpenAI
+import os
+from pydantic import BaseModel
+from dotenv import load_dotenv
+
+# ... (keep the existing imports and setup)
+
 @app.post("/transcribe", response_model=TranscriptionResponse)
 async def transcribe(audio: UploadFile = File(...)):
-    #try:
+    supported_formats = ['flac', 'm4a', 'mp3', 'mp4', 'mpeg', 'mpga', 'oga', 'ogg', 'wav', 'webm']
+    file_extension = audio.filename.split('.')[-1].lower()
+
+    if file_extension not in supported_formats:
+        raise HTTPException(status_code=400, detail=f"Unsupported file format. Supported formats are: {', '.join(supported_formats)}")
+
+    try:
         transcription = client.audio.transcriptions.create(
             model="whisper-1",
-            file=audio.file
+            file=audio.file,
+            response_format="text"
         )
-        return {"text": transcription.text}
-    #except Exception as e:
-    #    raise HTTPException(status_code=500, detail=str(e))
+        return {"text": transcription}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
