@@ -1,31 +1,37 @@
-from flask import Flask, render_template, request, jsonify
+from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 from openai import OpenAI
 import os
+from pydantic import BaseModel
 
-app = Flask(__name__)
+app = FastAPI()
 
 # Initialize OpenAI client
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+# Mount the static directory
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.route('/transcribe', methods=['POST'])
-def transcribe():
-    if 'audio' not in request.files:
-        return jsonify({"error": "No audio file provided"}), 400
-    
-    audio_file = request.files['audio']
-    
+@app.get("/", response_class=HTMLResponse)
+async def index():
+    with open("templates/index.html", "r") as file:
+        return file.read()
+
+class TranscriptionResponse(BaseModel):
+    text: str
+
+@app.post("/transcribe", response_model=TranscriptionResponse)
+async def transcribe(audio: UploadFile = File(...)):
     try:
         transcription = client.audio.transcriptions.create(
             model="whisper-1",
-            file=audio_file
+            file=audio.file
         )
-        return jsonify({"text": transcription.text})
+        return {"text": transcription.text}
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
