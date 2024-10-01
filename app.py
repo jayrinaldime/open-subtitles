@@ -27,14 +27,14 @@ class TranscriptionResponse(BaseModel):
 
 @app.post("/transcribe", response_model=TranscriptionResponse)
 async def transcribe(audio: UploadFile = File(...)):
-    try:
+    #try:
         transcription = client.audio.transcriptions.create(
             model="whisper-1",
             file=audio.file
         )
         return {"text": transcription.text}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    #except Exception as e:
+    #    raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
