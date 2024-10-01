@@ -4,6 +4,10 @@ from fastapi.responses import HTMLResponse
 from openai import OpenAI
 import os
 from pydantic import BaseModel
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = FastAPI()
 
