@@ -2,7 +2,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
-from openai import OpenAI
+from openai import AsyncOpenAI
 import os
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -10,9 +10,9 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-def translate_to_english(text: str) -> str:
+async def translate_to_english(text: str) -> str:
     try:
-        response = client.chat.completions.create(
+        response = await client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a translator. Translate the following text to English. Only return the translated text. Do **not** state the original input and do **NOT** summarize"},
@@ -35,8 +35,8 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-# Initialize OpenAI client
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+# Initialize async OpenAI client
+client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 # Mount the static directory
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -73,7 +73,7 @@ async def transcribe(audio: UploadFile = File(...)):
         audio_content = await audio.read()
         
         # Use the content for transcription
-        transcription = client.audio.transcriptions.create(
+        transcription = await client.audio.transcriptions.create(
             model="whisper-1",
             file=("audio.{}".format(file_extension), audio_content),
             response_format="text"
@@ -83,7 +83,7 @@ async def transcribe(audio: UploadFile = File(...)):
         del audio_content
         
         # Translate the transcribed text to English
-        translation = translate_to_english(transcription)
+        translation = await translate_to_english(transcription)
         
         return {"original_text": transcription, "translated_text": translation}
     except Exception as e:
