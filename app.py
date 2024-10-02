@@ -10,6 +10,20 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+def translate_japanese_to_english(text: str) -> str:
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a translator. Translate the following Japanese text to English."},
+                {"role": "user", "content": text}
+            ]
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"Translation error: {str(e)}")
+        return "Translation failed"
+
 app = FastAPI()
 
 # Configure CORS
@@ -33,7 +47,8 @@ async def index():
         return file.read()
 
 class TranscriptionResponse(BaseModel):
-    text: str
+    original_text: str
+    translated_text: str
 
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.staticfiles import StaticFiles
@@ -67,7 +82,10 @@ async def transcribe(audio: UploadFile = File(...)):
         # Delete the audio content after transcription
         del audio_content
         
-        return {"text": transcription}
+        # Translate the transcribed text from Japanese to English
+        translation = translate_japanese_to_english(transcription)
+        
+        return {"original_text": transcription, "translated_text": translation}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
