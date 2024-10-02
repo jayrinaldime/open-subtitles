@@ -10,12 +10,12 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-def translate_japanese_to_english(text: str) -> str:
+def translate_to_english(text: str) -> str:
     try:
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are a translator. Translate the following Japanese text to English."},
+                {"role": "system", "content": "You are a translator. Translate the following text to English. Only return the translated text. Do **not** state the original input and do **NOT** summarize"},
                 {"role": "user", "content": text}
             ]
         )
@@ -82,8 +82,8 @@ async def transcribe(audio: UploadFile = File(...)):
         # Delete the audio content after transcription
         del audio_content
         
-        # Translate the transcribed text from Japanese to English
-        translation = translate_japanese_to_english(transcription)
+        # Translate the transcribed text to English
+        translation = translate_to_english(transcription)
         
         return {"original_text": transcription, "translated_text": translation}
     except Exception as e:
