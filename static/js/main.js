@@ -99,8 +99,8 @@ function sendAudioToServer(audioBlob) {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.text) {
-            addTranscriptionToUI(data.text);
+        if (data.original_text && data.translated_text) {
+            addTranscriptionToUI(data.original_text, data.translated_text);
         } else if (data.error) {
             console.error('Error:', data.error);
         }
@@ -110,7 +110,7 @@ function sendAudioToServer(audioBlob) {
     });
 }
 
-function addTranscriptionToUI(text) {
+function addTranscriptionToUI(originalText, translatedText) {
     const container = document.getElementById('transcriptionContainer');
     const transcriptionElement = document.createElement('div');
     transcriptionElement.className = 'transcription-entry';
@@ -120,12 +120,17 @@ function addTranscriptionToUI(text) {
     timestampElement.className = 'timestamp';
     timestampElement.textContent = timestamp + ': ';
     
-    const textElement = document.createElement('span');
-    textElement.className = 'transcription-text';
-    textElement.textContent = text;
+    const originalTextElement = document.createElement('p');
+    originalTextElement.className = 'original-text';
+    originalTextElement.textContent = 'Original: ' + originalText;
+    
+    const translatedTextElement = document.createElement('p');
+    translatedTextElement.className = 'translated-text';
+    translatedTextElement.textContent = 'Translated: ' + translatedText;
     
     transcriptionElement.appendChild(timestampElement);
-    transcriptionElement.appendChild(textElement);
+    transcriptionElement.appendChild(originalTextElement);
+    transcriptionElement.appendChild(translatedTextElement);
     
     container.insertBefore(transcriptionElement, container.firstChild);
 }
