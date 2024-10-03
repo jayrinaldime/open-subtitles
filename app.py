@@ -24,6 +24,11 @@ app.add_middleware(
 
 # Initialize async OpenAI client
 client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+SYSTEM_PROMPT_TRANSLATE = os.environ.get("SYSTEM_PROMPT_TRANSLATE") or """
+You are a helpful translator. 
+Translate the text to English and only return the translated text. 
+Do **not** state the original input and do **NOT** summarize ! 
+"""
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -78,7 +83,7 @@ async def translate_to_english(text: str) -> str:
         response = await client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are a translator. Translate the following text to English. Only return the translated text. Do **not** state the original input and do **NOT** summarize"},
+                {"role": "system", "content": SYSTEM_PROMPT_TRANSLATE},
                 {"role": "user", "content": text}
             ]
         )
