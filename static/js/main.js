@@ -199,3 +199,9 @@ function addTranscriptionToUI(originalText, translatedText) {
     
     container.insertBefore(transcriptionElement, container.firstChild);
 }
+
+document.getElementById('clearTranscript').addEventListener('click', function() {
+    if (confirm('Are you sure you want to discard the transcript?')) {
+        document.getElementById('transcriptionContainer').innerHTML = '';
+    }
+});
