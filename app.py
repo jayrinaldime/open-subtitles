@@ -42,7 +42,7 @@ class TranscriptionResponse(BaseModel):
     translated_text: str
 
 @app.post("/transcribe", response_model=TranscriptionResponse)
-async def transcribe(audio: UploadFile = File(...), audio_level: float = Form(...)):
+async def transcribe(audio: UploadFile = File(...), audio_level: float = Form(...), max_audio_level: float = Form(...)):
     supported_formats = ['flac', 'm4a', 'mp3', 'mp4', 'mpeg', 'mpga', 'oga', 'ogg', 'wav', 'webm']
     file_extension = audio.filename.split('.')[-1].lower()
     if file_extension not in supported_formats:

@@ -58,7 +58,7 @@ function detectSilence(stream) {
     function checkAudioLevel() {
         analyser.getByteTimeDomainData(dataArray);
         let sum = 0;
-        let max = 0;
+        let max = maxAudioLevel;
         for (let i = 0; i < bufferLength; i++) {
             const value = Math.abs(dataArray[i] - 128);
             sum += value;
@@ -68,15 +68,16 @@ function detectSilence(stream) {
         }
         const average = sum / bufferLength;
         currentAudioLevel = average; // Store the current audio level
-        maxAudioLevel = max / 128; // Normalize to 0-1 range
+        maxAudioLevel = max; 
 
         // Update the audio level display
         const audioLevelElement = document.getElementById('audioLevel');
         if (audioLevelElement) {
             audioLevelElement.textContent = `Avg: ${average.toFixed(2)}, Max: ${maxAudioLevel.toFixed(2)}`;
         }
-        if (average < silenceThreshold) {
-            if (isRecording && isSilent) {
+        
+        if (currentAudioLevel < silenceThreshold) {
+            if (isRecording && isSilent ) {
                 audioChunks = []; 
             }
             if (!silenceDetectionTimer) {
@@ -134,9 +135,13 @@ function stopRecording() {
 }
 
 function sendAudioToServer(audioBlob) {
+    if (maxAudioLevel < 10) {
+        return;
+    }
     const formData = new FormData();
     formData.append('audio', audioBlob, 'audio.wav');
     formData.append('audio_level', currentAudioLevel.toFixed(2));
+    formData.append('max_audio_level', maxAudioLevel.toFixed(2));
 
     fetch('/transcribe', {
         method: 'POST',
