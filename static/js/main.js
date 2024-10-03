@@ -9,7 +9,7 @@ let audioLevelUpdateInterval;
 let currentAudioLevel = 0;
 let maxAudioLevel = 0
 let maxAudioLevelThreshold = 10;
-let transcriptLayout = 'detailed';
+let transcriptLayout = 'compact';
 
 document.getElementById('toggleRecording').addEventListener('click', toggleRecording);
 document.getElementById('settingsButton').addEventListener('click', toggleSettings);
