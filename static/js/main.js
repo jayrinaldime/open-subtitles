@@ -54,7 +54,6 @@ function detectSilence(stream) {
             sum += Math.abs(dataArray[i] - 128);
         }
         const average = sum / bufferLength;
-        //console.error(average)
         if (average < silenceThreshold) {
             if (!silenceDetectionTimer) {
                 silenceDetectionTimer = setTimeout(() => {
