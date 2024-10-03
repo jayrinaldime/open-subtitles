@@ -12,6 +12,7 @@ let maxAudioLevelThreshold = 10;
 
 document.getElementById('startRecording').addEventListener('click', startRecording);
 document.getElementById('stopRecording').addEventListener('click', stopRecording);
+document.getElementById('settingsButton').addEventListener('click', toggleSettings);
 document.getElementById('maxAudioLevelThreshold').addEventListener('input', function() {
     maxAudioLevelThreshold = parseInt(this.value);
     document.getElementById('maxAudioLevelThresholdValue').textContent = maxAudioLevelThreshold;
@@ -24,6 +25,15 @@ document.getElementById('silenceDuration').addEventListener('input', function() 
     silenceDuration = parseInt(this.value);
     document.getElementById('silenceDurationValue').textContent = silenceDuration;
 });
+
+function toggleSettings() {
+    const settingsPanel = document.getElementById('settingsPanel');
+    if (settingsPanel.style.display === 'none') {
+        settingsPanel.style.display = 'block';
+    } else {
+        settingsPanel.style.display = 'none';
+    }
+}
 
 function startContinuousRecording() {
     navigator.mediaDevices.getUserMedia({ audio: true })

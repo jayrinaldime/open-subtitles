@@ -88,3 +88,30 @@ button:disabled {
     font-weight: bold;
     margin-left: 5px;
 }
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.settings-panel {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.settings-panel h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
