@@ -10,8 +10,7 @@ let currentAudioLevel = 0;
 let maxAudioLevel = 0
 let maxAudioLevelThreshold = 10;
 
-document.getElementById('startRecording').addEventListener('click', startRecording);
-document.getElementById('stopRecording').addEventListener('click', stopRecording);
+document.getElementById('toggleRecording').addEventListener('click', toggleRecording);
 document.getElementById('settingsButton').addEventListener('click', toggleSettings);
 document.getElementById('maxAudioLevelThreshold').addEventListener('input', function() {
     maxAudioLevelThreshold = parseInt(this.value);
@@ -122,10 +121,20 @@ function detectSilence(stream) {
     checkAudioLevel();
 }
 
+function toggleRecording() {
+    const button = document.getElementById('toggleRecording');
+    if (isRecording) {
+        stopRecording();
+        button.textContent = 'Start Recording';
+    } else {
+        startRecording();
+        button.textContent = 'Stop Recording';
+    }
+}
+
 function startRecording() {
     startContinuousRecording();
-    document.getElementById('startRecording').disabled = true;
-    document.getElementById('stopRecording').disabled = false;
+    isRecording = true;
     
     // Show audio level element
     const audioLevelContainer = document.getElementById('audioLevelContainer');
@@ -139,8 +148,6 @@ function stopRecording() {
     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
     }
-    document.getElementById('startRecording').disabled = false;
-    document.getElementById('stopRecording').disabled = true;
     
     // Hide audio level element
     const audioLevelContainer = document.getElementById('audioLevelContainer');
