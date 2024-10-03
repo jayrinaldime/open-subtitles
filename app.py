@@ -24,11 +24,15 @@ app.add_middleware(
 
 # Initialize async OpenAI client
 client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
 SYSTEM_PROMPT_TRANSLATE = os.environ.get("SYSTEM_PROMPT_TRANSLATE") or """
 You are a helpful translator. 
 Translate the text to English and only return the translated text. 
 Do **not** state the original input and do **NOT** summarize ! 
 """
+
+LLM_CHAT_MODEL = os.environ.get("LLM_CHAT_MODEL") or "gpt-4o-mini"
+LLM_STT_MODEL = os.environ.get("LLM_STT_MODEL") or "whisper-1"
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -62,7 +66,7 @@ async def transcribe(audio: UploadFile = File(...), audio_level: float = Form(..
         
         # Use the content for transcription
         transcription = await client.audio.transcriptions.create(
-            model="whisper-1",
+            model=LLM_STT_MODEL,
             file=("audio.{}".format(file_extension), audio_content),
             response_format="text"
         )
@@ -81,7 +85,7 @@ async def transcribe(audio: UploadFile = File(...), audio_level: float = Form(..
 async def translate_to_english(text: str) -> str:
     try:
         response = await client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=LLM_CHAT_MODEL,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT_TRANSLATE},
                 {"role": "user", "content": text}
