@@ -60,3 +60,21 @@ button:disabled {
 .transcription-text {
     color: #333;
 }
+
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    display: inline-block;
+    width: 120px;
+}
+
+.control-group input[type="range"] {
+    width: 200px;
+    vertical-align: middle;
+}
+
+.control-group span {
+    margin-left: 10px;
+}

@@ -2,11 +2,15 @@ let mediaRecorder;
 let audioChunks = [];
 let isRecording = false;
 let silenceDetectionTimer;
-const SILENCE_THRESHOLD = 0.6;
+let silenceThreshold = 0.6;
 const SILENCE_DURATION = 300; // 1 second of silence
 
 document.getElementById('startRecording').addEventListener('click', startRecording);
 document.getElementById('stopRecording').addEventListener('click', stopRecording);
+document.getElementById('silenceThreshold').addEventListener('input', function() {
+    silenceThreshold = parseFloat(this.value);
+    document.getElementById('silenceThresholdValue').textContent = silenceThreshold.toFixed(2);
+});
 
 function startContinuousRecording() {
     navigator.mediaDevices.getUserMedia({ audio: true })
@@ -47,7 +51,7 @@ function detectSilence(stream) {
         }
         const average = sum / bufferLength;
         //console.error(average)
-        if (average < SILENCE_THRESHOLD) {
+        if (average < silenceThreshold) {
             if (!silenceDetectionTimer) {
                 silenceDetectionTimer = setTimeout(() => {
                     if (isRecording) {
