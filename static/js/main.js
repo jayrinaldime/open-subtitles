@@ -3,13 +3,17 @@ let audioChunks = [];
 let isRecording = false;
 let silenceDetectionTimer;
 let silenceThreshold = 0.6;
-const SILENCE_DURATION = 300; // 1 second of silence
+let silenceDuration = 300;
 
 document.getElementById('startRecording').addEventListener('click', startRecording);
 document.getElementById('stopRecording').addEventListener('click', stopRecording);
 document.getElementById('silenceThreshold').addEventListener('input', function() {
     silenceThreshold = parseFloat(this.value);
     document.getElementById('silenceThresholdValue').textContent = silenceThreshold.toFixed(2);
+});
+document.getElementById('silenceDuration').addEventListener('input', function() {
+    silenceDuration = parseInt(this.value);
+    document.getElementById('silenceDurationValue').textContent = silenceDuration;
 });
 
 function startContinuousRecording() {
@@ -63,7 +67,7 @@ function detectSilence(stream) {
                             }
                         }, 100);
                     }
-                }, SILENCE_DURATION);
+                }, silenceDuration);
             }
         } else {
             clearTimeout(silenceDetectionTimer);
