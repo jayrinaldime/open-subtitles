@@ -197,28 +197,25 @@ function addTranscriptionToUI(originalText, translatedText) {
     timestampElement.className = 'timestamp';
     timestampElement.textContent = timestamp + ': ';
     
-    if (transcriptLayout === 'detailed') {
-        const originalTextElement = document.createElement('p');
-        originalTextElement.className = 'original-text';
-        originalTextElement.textContent = 'Original: ' + originalText;
-        
-        const translatedTextElement = document.createElement('p');
-        translatedTextElement.className = 'translated-text';
-        translatedTextElement.textContent = 'Translated: ' + translatedText;
-        
-        transcriptionElement.appendChild(timestampElement);
-        transcriptionElement.appendChild(originalTextElement);
-        transcriptionElement.appendChild(translatedTextElement);
-    } else { // compact layout
-        const translatedTextElement = document.createElement('span');
-        translatedTextElement.className = 'translated-text';
-        translatedTextElement.textContent = translatedText;
-        
-        transcriptionElement.appendChild(timestampElement);
-        transcriptionElement.appendChild(translatedTextElement);
-    }
+    const originalTextElement = document.createElement('p');
+    originalTextElement.className = 'original-text';
+    originalTextElement.textContent = originalText;
+    originalTextElement.style.display = transcriptLayout === 'detailed' ? 'block' : 'none';
+    
+    const translatedTextElement = document.createElement('p');
+    translatedTextElement.className = 'translated-text';
+    translatedTextElement.textContent = translatedText;
+    
+    transcriptionElement.appendChild(timestampElement);
+    transcriptionElement.appendChild(originalTextElement);
+    transcriptionElement.appendChild(translatedTextElement);
+    
+    // Store the original and translated text as data attributes
+    transcriptionElement.dataset.originalText = originalText;
+    transcriptionElement.dataset.translatedText = translatedText;
     
     container.insertBefore(transcriptionElement, container.firstChild);
+    updateTranscriptLayout();
 }
 
 function updateTranscriptLayout() {
@@ -226,22 +223,16 @@ function updateTranscriptLayout() {
     const entries = container.getElementsByClassName('transcription-entry');
     
     Array.from(entries).forEach(entry => {
-        const timestamp = entry.querySelector('.timestamp');
         const originalText = entry.querySelector('.original-text');
         const translatedText = entry.querySelector('.translated-text');
         
         if (transcriptLayout === 'detailed') {
-            if (originalText) originalText.style.display = 'block';
-            if (translatedText) {
-                translatedText.style.display = 'block';
-                translatedText.textContent = 'Translated: ' + translatedText.textContent.replace('Translated: ', '');
-            }
+            originalText.style.display = 'block';
+            originalText.textContent = entry.dataset.originalText;
+            translatedText.textContent = 'Translated: ' + entry.dataset.translatedText;
         } else { // compact layout
-            if (originalText) originalText.style.display = 'none';
-            if (translatedText) {
-                translatedText.style.display = 'inline';
-                translatedText.textContent = translatedText.textContent.replace('Translated: ', '');
-            }
+            originalText.style.display = 'none';
+            translatedText.textContent = entry.dataset.translatedText;
         }
     });
 }
