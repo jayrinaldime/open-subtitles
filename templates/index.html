@@ -11,7 +11,8 @@
          <h1>Audio Transcribe & Translate</h1>
          <div class="controls">
              <div class="recording-controls">
-                 <button id="toggleRecording" aria-label="Start Recording">Start Recording</button>
+                 <button id="toggleRecording" aria-label="Start Recording" aria-pressed="false">Start Recording</button>
+                 <span id="recordingIndicator" aria-hidden="true" style="display: none;"></span>
                  <button id="clearTranscript">Clear</button>
              </div>
              <button id="settingsButton" class="icon-button">⚙️</button>

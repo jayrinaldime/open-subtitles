@@ -12,7 +12,8 @@ let maxAudioLevelThreshold = 10;
 let transcriptLayout = 'compact';
 let debugMode = false;
 
-document.getElementById('toggleRecording').addEventListener('click', toggleRecording);
+const toggleRecordingButton = document.getElementById('toggleRecording');
+toggleRecordingButton.addEventListener('click', toggleRecording);
 document.getElementById('settingsButton').addEventListener('click', toggleSettings);
 document.getElementById('maxAudioLevelThreshold').addEventListener('input', function() {
     maxAudioLevelThreshold = parseInt(this.value);
