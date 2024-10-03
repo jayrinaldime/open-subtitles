@@ -6,6 +6,7 @@ let silenceThreshold = 0.6;
 let silenceDuration = 300;
 let isSilent = true;
 let audioLevelUpdateInterval;
+let currentAudioLevel = 0;
 
 document.getElementById('startRecording').addEventListener('click', startRecording);
 document.getElementById('stopRecording').addEventListener('click', stopRecording);
@@ -58,6 +59,7 @@ function detectSilence(stream) {
             sum += Math.abs(dataArray[i] - 128);
         }
         const average = sum / bufferLength;
+        currentAudioLevel = average; // Store the current audio level
     
         // Update the audio level display
         const audioLevelElement = document.getElementById('audioLevel');
@@ -125,6 +127,7 @@ function stopRecording() {
 function sendAudioToServer(audioBlob) {
     const formData = new FormData();
     formData.append('audio', audioBlob, 'audio.wav');
+    formData.append('audio_level', currentAudioLevel.toFixed(2));
 
     fetch('/transcribe', {
         method: 'POST',
