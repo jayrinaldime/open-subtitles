@@ -9,12 +9,17 @@ let audioLevelUpdateInterval;
 let currentAudioLevel = 0;
 let maxAudioLevel = 0
 let maxAudioLevelThreshold = 10;
+let transcriptLayout = 'detailed';
 
 document.getElementById('toggleRecording').addEventListener('click', toggleRecording);
 document.getElementById('settingsButton').addEventListener('click', toggleSettings);
 document.getElementById('maxAudioLevelThreshold').addEventListener('input', function() {
     maxAudioLevelThreshold = parseInt(this.value);
     document.getElementById('maxAudioLevelThresholdValue').textContent = maxAudioLevelThreshold;
+});
+document.getElementById('transcriptLayout').addEventListener('change', function() {
+    transcriptLayout = this.value;
+    updateTranscriptLayout();
 });
 document.getElementById('silenceThreshold').addEventListener('input', function() {
     silenceThreshold = parseFloat(this.value);
@@ -192,19 +197,53 @@ function addTranscriptionToUI(originalText, translatedText) {
     timestampElement.className = 'timestamp';
     timestampElement.textContent = timestamp + ': ';
     
-    const originalTextElement = document.createElement('p');
-    originalTextElement.className = 'original-text';
-    originalTextElement.textContent = 'Original: ' + originalText;
-    
-    const translatedTextElement = document.createElement('p');
-    translatedTextElement.className = 'translated-text';
-    translatedTextElement.textContent = 'Translated: ' + translatedText;
-    
-    transcriptionElement.appendChild(timestampElement);
-    transcriptionElement.appendChild(originalTextElement);
-    transcriptionElement.appendChild(translatedTextElement);
+    if (transcriptLayout === 'detailed') {
+        const originalTextElement = document.createElement('p');
+        originalTextElement.className = 'original-text';
+        originalTextElement.textContent = 'Original: ' + originalText;
+        
+        const translatedTextElement = document.createElement('p');
+        translatedTextElement.className = 'translated-text';
+        translatedTextElement.textContent = 'Translated: ' + translatedText;
+        
+        transcriptionElement.appendChild(timestampElement);
+        transcriptionElement.appendChild(originalTextElement);
+        transcriptionElement.appendChild(translatedTextElement);
+    } else { // compact layout
+        const translatedTextElement = document.createElement('span');
+        translatedTextElement.className = 'translated-text';
+        translatedTextElement.textContent = translatedText;
+        
+        transcriptionElement.appendChild(timestampElement);
+        transcriptionElement.appendChild(translatedTextElement);
+    }
     
     container.insertBefore(transcriptionElement, container.firstChild);
+}
+
+function updateTranscriptLayout() {
+    const container = document.getElementById('transcriptionContainer');
+    const entries = container.getElementsByClassName('transcription-entry');
+    
+    Array.from(entries).forEach(entry => {
+        const timestamp = entry.querySelector('.timestamp');
+        const originalText = entry.querySelector('.original-text');
+        const translatedText = entry.querySelector('.translated-text');
+        
+        if (transcriptLayout === 'detailed') {
+            if (originalText) originalText.style.display = 'block';
+            if (translatedText) {
+                translatedText.style.display = 'block';
+                translatedText.textContent = 'Translated: ' + translatedText.textContent.replace('Translated: ', '');
+            }
+        } else { // compact layout
+            if (originalText) originalText.style.display = 'none';
+            if (translatedText) {
+                translatedText.style.display = 'inline';
+                translatedText.textContent = translatedText.textContent.replace('Translated: ', '');
+            }
+        }
+    });
 }
 
 document.getElementById('clearTranscript').addEventListener('click', function() {
