@@ -7,6 +7,7 @@ let silenceDuration = 300;
 let isSilent = true;
 let audioLevelUpdateInterval;
 let currentAudioLevel = 0;
+let maxAudioLevel = 0
 
 document.getElementById('startRecording').addEventListener('click', startRecording);
 document.getElementById('stopRecording').addEventListener('click', stopRecording);
@@ -25,6 +26,7 @@ function startContinuousRecording() {
             mediaRecorder = new MediaRecorder(stream);
             isRecording = true;
             isSilent = true
+            maxAudioLevel = 0
 
             mediaRecorder.ondataavailable = (event) => {
                 audioChunks.push(event.data);
@@ -34,7 +36,8 @@ function startContinuousRecording() {
                 const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                 sendAudioToServer(audioBlob);
                 audioChunks = [];
-                isSilent = true
+                isSilent = true;
+                maxAudioLevel = 0;
             };
 
             mediaRecorder.start();
