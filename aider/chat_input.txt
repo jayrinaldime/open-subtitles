@@ -175,3 +175,233 @@
 
 # 2024-10-03 21:54:12.795147
 +/clear
+
+# 2024-10-03 22:14:16.702126
++/architect I want to dislay the `average` value from function `checkAudioLevel` in the frontend UI. But only display the value when its recording. (When user clicks the `Start recording` button. If user press `Stop recording` dont display the average audio level. 
+
+# 2024-10-03 22:16:01.027298
++Yes
+
+# 2024-10-03 22:24:20.033720
++/clear
+
+# 2024-10-03 22:27:24.895324
++/architect do an transcribe request when audio is above silenceThreshold. If not above do not call the transcribe request. 
+
+# 2024-10-03 22:29:51.848512
++N
+
+# 2024-10-03 22:30:00.095391
++/clear
+
+# 2024-10-03 22:31:34.322607
++/architect do an transcribe request when audio is above silenceThreshold. If not above do not call the transcribe request. When the average value is not above silenceThreshold do not stop recording. Just dont do a transcribe when not above the silenceThreshold. if below silenceThreshold just discard the audio but continue to record. 
+
+# 2024-10-03 22:33:03.703503
++yes
+
+# 2024-10-03 22:33:34.551072
++/clear
+
+# 2024-10-03 22:36:11.510685
++/undo
+
+# 2024-10-03 22:48:29.039055
++/clear
+
+# 2024-10-03 22:49:32.018324
++/architect please add the average audio level as part of transcribe api call. In the transcribe endpoint only log the value
+
+# 2024-10-03 22:50:16.760493
++y
+
+# 2024-10-03 22:52:00.424092
++yes
+
+# 2024-10-03 22:56:45.968872
++/clear
+
+# 2024-10-03 22:58:38.116756
++in `checkAudioLevel` also calculate the max value in `dataArray` and put the max value in `maxAudioLevel` 
+
+# 2024-10-03 23:23:24.473867
++/drop app.py 
+
+# 2024-10-03 23:23:34.849216
++/add app.py
+
+# 2024-10-03 23:23:49.535097
++/ask what is the use of silenceThreshold ? 
+
+# 2024-10-03 23:25:52.679115
++/architect i want to remove silenceThreshold. I feel that silenceThreshold is the same as maxAudioLevel in that the value of maxAudioLevel is the threshold in which we can consider that the user is now speaking
+
+# 2024-10-03 23:26:36.633046
++no
+
+# 2024-10-03 23:27:22.522301
++/architect i want to remove silenceThreshold. I feel that silenceThreshold is the same as maxAudioLevel in that the value of maxAudioLevel is the threshold in which we can consider that the user is now speaking. But i want to keep the UI for silence threshold. this will allow the user to adjust the theshold value in runtime
+
+# 2024-10-03 23:28:36.184253
++yes
+
+# 2024-10-03 23:33:27.333173
++/clear
+
+# 2024-10-03 23:33:35.757868
++/architect i want to remove silenceThreshold. I feel that silenceThreshold is the same as maxAudioLevel in that the value of maxAudioLevel is the threshold in which we can consider that the user is now speaking. But i want to keep the UI for silence threshold. this will allow the user to adjust the theshold value in runtime
+
+# 2024-10-03 23:35:16.968218
++yes
+
+# 2024-10-03 23:47:02.599172
++/undo
+
+# 2024-10-03 23:47:04.553935
++/clear
+
+# 2024-10-03 23:48:58.785935
++/architect create ui to set the maxAudioLevelThreshold and use that value to compare the maxAudioLevel instead of the hardcoded value 10 
+
+# 2024-10-03 23:49:36.502575
++yes
+
+# 2024-10-03 23:56:51.652983
++/architect please change the frontend. I want to move the `Silence Threshold` `Silence Duration` `Max Audio Level Threshold` to settings view. and only show settings when user click the settings button (settings icon)
+
+# 2024-10-03 23:57:45.952526
++yes
+
+# 2024-10-04 00:03:34.463968
++/clear
+
+# 2024-10-04 00:05:19.714815
++the start and stop recording button should be near to each other with only 20 px margin between each other horizontal linear layout. The settings button should be at the right most
+
+# 2024-10-04 00:10:16.378728
++/clear 
+
+# 2024-10-04 00:11:45.675567
++add a clear button. when pressed a pop up is displayed asking the user `Are you sure you want to discard the transcript` if user press yes then clear the the `transcriptionContainer`
+
+# 2024-10-04 00:19:09.554946
++y
+
+# 2024-10-04 00:22:18.712853
++unify the start and stop button. 
+
+# 2024-10-04 00:24:00.062038
++Yes
+
+# 2024-10-04 00:26:13.282739
++move the clear button to be beside the record button. clear button text should be changed to "Clear" 
+
+# 2024-10-04 00:26:29.205602
++/clear 
+
+# 2024-10-04 00:26:31.358386
++n
+
+# 2024-10-04 00:26:32.970274
++/clear
+
+# 2024-10-04 00:32:50.127958
++add a new settings. `Transcript view layout` possible values are `Compat` & `Detailed`. When User choose `Compat` Only display the *time* and *translated text* no need for Label `Translated`. When user choose `detailed` display the current layout. 
+
+# 2024-10-04 00:35:44.513952
++add a new settings. `Transcript view layout` possible values are `Compat` & `Detailed`. When User choose `C
++ompat` Only display the *time* and *translated text* no need for Label `Translated`. When user choose `detail
++ed` display the current layout.  
+
+# 2024-10-04 00:36:02.449770
++A
+
+# 2024-10-04 00:36:49.697918
++N
+
+# 2024-10-04 00:36:52.869888
++/run open templates/index.html
+
+# 2024-10-04 00:39:27.070018
++/architect is it possible to dynamically change `Transcript view layout` at runtime but still update the existing transcripts
+
+# 2024-10-04 00:40:23.041712
++Yes
+
+# 2024-10-04 00:41:59.705455
++/undo
+
+# 2024-10-04 00:42:36.605662
++/architect
+
+# 2024-10-04 00:42:49.185955
++/clear 
+
+# 2024-10-04 00:45:14.179788
++/architect is it possible to dynamically change `Transcript view layout` at runtime but still update the existing transcripts. Add the `originalText` `translatedText` as part of the UI object. This way when the layout is changed we can recreate the transcript using the new layout config. 
+
+# 2024-10-04 00:46:11.659017
++N
+
+# 2024-10-04 00:46:23.871847
++/clear 
+
+# 2024-10-04 00:47:15.387527
++/architect is it possible to dynamically change `Transcript view layout` at runtime but still update the existing transcripts. Add the `originalText` `translatedText` as part of the UI object. This way when the layout is changed we can recreate the transcript using the new layout config. for the `compact` layout add the `original-text` value as a hidden ui. so we can recreate the detailed view correctly. 
+
+# 2024-10-04 00:47:56.211950
++y
+
+# 2024-10-04 00:55:52.861480
++set the default layout to compat
+
+# 2024-10-04 00:56:22.343518
++n
+
+# 2024-10-04 00:58:37.420575
++/clear
+
+# 2024-10-04 01:17:37.482871
++add a setting to hide the audio level. `Debug mode` toggle On|Off
+
+# 2024-10-04 01:18:02.239512
++n
+
+# 2024-10-04 01:21:29.782739
++/architect is it possible to store the settings value in the browser storage ? this way when the page is refreshed the setting will remain the same and not go back to the default values.
+
+# 2024-10-04 01:25:44.351299
++no
+
+# 2024-10-04 01:25:48.369448
++/clear
+
+# 2024-10-04 01:26:03.401453
++/architect is it possible to store the settings value in the browser local storage ? this way when the page is refreshed the setting will remain the same and not go back to the default values.
+
+# 2024-10-04 01:26:51.342537
++Yes
+
+# 2024-10-04 01:27:16.082706
++n
+
+# 2024-10-04 01:27:21.466970
++y
+
+# 2024-10-04 01:29:16.287825
++/clear
+
+# 2024-10-04 01:29:36.668612
++store the settings value in the browser local storage ? this way when the page is refreshed the setting will remain the same and not go back to the default values.
+
+# 2024-10-04 01:30:59.529181
++n
+
+# 2024-10-04 01:33:58.858982
++/clear
+
+# 2024-10-04 01:34:18.942696
++put the recording indicator ui before the start recording button 
+
+# 2024-10-04 01:34:29.728784
++n
