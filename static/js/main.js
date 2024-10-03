@@ -15,25 +15,65 @@ let debugMode = false;
 const toggleRecordingButton = document.getElementById('toggleRecording');
 toggleRecordingButton.addEventListener('click', toggleRecording);
 document.getElementById('settingsButton').addEventListener('click', toggleSettings);
+
+function saveSettings() {
+    localStorage.setItem('audioTranscribeSettings', JSON.stringify({
+        maxAudioLevelThreshold,
+        silenceThreshold,
+        silenceDuration,
+        transcriptLayout,
+        debugMode
+    }));
+}
+
+function loadSettings() {
+    const savedSettings = JSON.parse(localStorage.getItem('audioTranscribeSettings'));
+    if (savedSettings) {
+        maxAudioLevelThreshold = savedSettings.maxAudioLevelThreshold;
+        silenceThreshold = savedSettings.silenceThreshold;
+        silenceDuration = savedSettings.silenceDuration;
+        transcriptLayout = savedSettings.transcriptLayout;
+        debugMode = savedSettings.debugMode;
+
+        document.getElementById('maxAudioLevelThreshold').value = maxAudioLevelThreshold;
+        document.getElementById('maxAudioLevelThresholdValue').textContent = maxAudioLevelThreshold;
+        document.getElementById('silenceThreshold').value = silenceThreshold;
+        document.getElementById('silenceThresholdValue').textContent = silenceThreshold.toFixed(2);
+        document.getElementById('silenceDuration').value = silenceDuration;
+        document.getElementById('silenceDurationValue').textContent = silenceDuration;
+        document.getElementById('transcriptLayout').value = transcriptLayout;
+        document.getElementById('debugMode').checked = debugMode;
+        updateAudioLevelVisibility();
+        updateTranscriptLayout();
+    }
+}
+
+loadSettings();
+
 document.getElementById('maxAudioLevelThreshold').addEventListener('input', function() {
     maxAudioLevelThreshold = parseInt(this.value);
     document.getElementById('maxAudioLevelThresholdValue').textContent = maxAudioLevelThreshold;
+    saveSettings();
 });
 document.getElementById('transcriptLayout').addEventListener('change', function() {
     transcriptLayout = this.value;
     updateTranscriptLayout();
+    saveSettings();
 });
 document.getElementById('silenceThreshold').addEventListener('input', function() {
     silenceThreshold = parseFloat(this.value);
     document.getElementById('silenceThresholdValue').textContent = silenceThreshold.toFixed(2);
+    saveSettings();
 });
 document.getElementById('silenceDuration').addEventListener('input', function() {
     silenceDuration = parseInt(this.value);
     document.getElementById('silenceDurationValue').textContent = silenceDuration;
+    saveSettings();
 });
 document.getElementById('debugMode').addEventListener('change', function() {
     debugMode = this.checked;
     updateAudioLevelVisibility();
+    saveSettings();
 });
 
 function updateAudioLevelVisibility() {
