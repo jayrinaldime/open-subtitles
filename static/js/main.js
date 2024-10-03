@@ -4,6 +4,7 @@ let isRecording = false;
 let silenceDetectionTimer;
 let silenceThreshold = 0.6;
 let silenceDuration = 300;
+let isSilent = true;
 let audioLevelUpdateInterval;
 
 document.getElementById('startRecording').addEventListener('click', startRecording);
@@ -22,6 +23,7 @@ function startContinuousRecording() {
         .then(stream => {
             mediaRecorder = new MediaRecorder(stream);
             isRecording = true;
+            isSilent = true
 
             mediaRecorder.ondataavailable = (event) => {
                 audioChunks.push(event.data);
@@ -31,6 +33,7 @@ function startContinuousRecording() {
                 const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                 sendAudioToServer(audioBlob);
                 audioChunks = [];
+                isSilent = true
             };
 
             mediaRecorder.start();
@@ -61,8 +64,10 @@ function detectSilence(stream) {
         if (audioLevelElement) {
             audioLevelElement.textContent = average.toFixed(2);
         }
-
         if (average < silenceThreshold) {
+            if (isRecording && isSilent) {
+                audioChunks = []; 
+            }
             if (!silenceDetectionTimer) {
                 silenceDetectionTimer = setTimeout(() => {
                     if (isRecording) {
@@ -77,6 +82,7 @@ function detectSilence(stream) {
                 }, silenceDuration);
             }
         } else {
+            isSilent = false
             clearTimeout(silenceDetectionTimer);
             silenceDetectionTimer = null;
         }
