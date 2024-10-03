@@ -1,4 +1,5 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
+import logging
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -24,6 +25,10 @@ app.add_middleware(
 # Initialize async OpenAI client
 client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Mount the static directory
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -37,13 +42,16 @@ class TranscriptionResponse(BaseModel):
     translated_text: str
 
 @app.post("/transcribe", response_model=TranscriptionResponse)
-async def transcribe(audio: UploadFile = File(...)):
+async def transcribe(audio: UploadFile = File(...), audio_level: float = Form(...)):
     supported_formats = ['flac', 'm4a', 'mp3', 'mp4', 'mpeg', 'mpga', 'oga', 'ogg', 'wav', 'webm']
     file_extension = audio.filename.split('.')[-1].lower()
     if file_extension not in supported_formats:
        raise HTTPException(status_code=400, detail=f"Unsupported file format. Supported formats are: {', '.join(supported_formats)}")
 
     try:
+        # Log the audio level
+        logger.info(f"Received audio with average level: {audio_level}")
+
         # Read the content of the uploaded file
         audio_content = await audio.read()
         
