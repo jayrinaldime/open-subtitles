@@ -73,6 +73,12 @@ function startContinuousRecording() {
 
             mediaRecorder.start();
             detectSilence(stream);
+        })
+        .catch(error => {
+            console.error('Error accessing microphone:', error);
+            showError('Unable to access microphone. Please check your permissions.');
+            isRecording = false;
+            updateRecordingState();
         });
 }
 
@@ -86,25 +92,30 @@ function detectSilence(stream) {
     const bufferLength = analyser.fftSize;
     const dataArray = new Uint8Array(bufferLength);
 
-    function checkAudioLevel() {
-        analyser.getByteTimeDomainData(dataArray);
-        let sum = 0;
-        let max = maxAudioLevel;
-        for (let i = 0; i < bufferLength; i++) {
-            const value = Math.abs(dataArray[i] - 128);
-            sum += value;
-            if (value > max) {
-                max = value;
+    let lastUpdateTime = 0;
+    function checkAudioLevel(timestamp) {
+        if (timestamp - lastUpdateTime > 100) { // Update every 100ms
+            analyser.getByteTimeDomainData(dataArray);
+            let sum = 0;
+            let max = maxAudioLevel;
+            for (let i = 0; i < bufferLength; i++) {
+                const value = Math.abs(dataArray[i] - 128);
+                sum += value;
+                if (value > max) {
+                    max = value;
+                }
             }
-        }
-        const average = sum / bufferLength;
-        currentAudioLevel = average; // Store the current audio level
-        maxAudioLevel = max; 
+            const average = sum / bufferLength;
+            currentAudioLevel = average; // Store the current audio level
+            maxAudioLevel = max; 
 
-        // Update the audio level display
-        const audioLevelElement = document.getElementById('audioLevel');
-        if (audioLevelElement) {
-            audioLevelElement.textContent = `Avg: ${average.toFixed(2)}, Max: ${maxAudioLevel.toFixed(2)}`;
+            // Update the audio level display
+            const audioLevelElement = document.getElementById('audioLevel');
+            if (audioLevelElement) {
+                audioLevelElement.textContent = `Avg: ${average.toFixed(2)}, Max: ${maxAudioLevel.toFixed(2)}`;
+            }
+
+            lastUpdateTime = timestamp;
         }
         
         if (currentAudioLevel < silenceThreshold) {
@@ -139,14 +150,12 @@ function detectSilence(stream) {
 }
 
 function toggleRecording() {
-    const button = document.getElementById('toggleRecording');
     if (isRecording) {
         stopRecording();
-        button.textContent = 'Start Recording';
     } else {
         startRecording();
-        button.textContent = 'Stop Recording';
     }
+    updateRecordingState();
 }
 
 function startRecording() {
