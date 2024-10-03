@@ -1,0 +1,177 @@
+
+# 2024-10-02 00:34:48.733381
++/add app.py
+
+# 2024-10-02 00:34:53.206455
++/add static/js/main.js
+
+# 2024-10-02 00:35:03.295221
++/add templates/index.html
+
+# 2024-10-02 00:35:21.619598
++/architect
+
+# 2024-10-02 00:39:19.752887
++/architect Currently to use the app, user will have to click `Start Recording` then talk then `Stop Recording`. Only then will backend process the audio and transform speech to text and display the text on the frontend. What i would like to do is click `Start Recording` then allow the user to talk continuously. Then the frontend will detect if audio from mic is silent for atleast 0.3 seconds. then transcribe the current audio but still continue audio recording in the frontent and only when user press `Stop Recording` to stop recording. 
+
+# 2024-10-02 00:39:46.773661
++Yes
+
+# 2024-10-02 00:44:10.281629
++Currently to use the app, user will have to click `Start Recording` then talk then `Stop Recording`. Only then will backend process the audio and transform speech to text and display the text on the frontend. What i would like to do is click `Start Recording` then allow the user to talk continuously. Then the frontend will detect if audio from mic is silent for atleast 0.3 seconds. then transcribe the current audio but still continue audio recording in the frontent and only when user press `Stop Recording` to stop recording. When the audio is already sent to transcribed backend delete the already sent audio file. 
+
+# 2024-10-02 00:45:31.272737
++/exit
+
+# 2024-10-02 00:46:56.041886
++/add app.py static/js/main.js templates/index.html 
+
+# 2024-10-02 00:46:59.841660
++Currently to use the app, user will have to click `Start Recording` then talk then `Stop Recording`. Only then will backend process the audio and transform speech to text and display the text on the frontend. What i would like to do is click `Start Recording` then allow the user to talk continuously. Then the frontend will detect if audio from mic is silent for atleast 0.3 seconds. then transcribe the current audio but still continue audio recording in the frontent and only when user press `Stop Recording` to stop recording. When the audio is already sent to transcribed backend delete the already sent audio file. 
+
+# 2024-10-02 00:47:27.590269
++yes
+
+# 2024-10-02 00:50:28.474093
++/undo
+
+# 2024-10-02 00:51:59.626293
++/exit
+
+# 2024-10-02 00:53:02.806697
++/add static/js/main.js app.py 
+
+# 2024-10-02 00:53:07.579834
++Currently to use the app, user will have to click `Start Recording` then talk then `Stop Recording`. Only then will backend process the audio and transform speech to text and display the text on the frontend. What i would like to do is click `Start Recording` then allow the user to talk continuously. Then the frontend will detect if audio from mic is silent for atleast 0.3 seconds. then transcribe the current audio but still continue audio recording in the frontent and only when user press `Stop Recording` to stop recording. When the audio is already sent to transcribed backend delete the already sent audio file. 
+
+# 2024-10-02 00:53:34.578409
++N
+
+# 2024-10-02 00:57:44.301707
++In frontend, please detect for silence/ when user is not talking then if silence is detected transcribe the already recorded audio. 
+
+# 2024-10-02 00:59:48.670750
++/undo 
+
+# 2024-10-02 01:00:48.603658
++/exit
+
+# 2024-10-02 01:01:07.569425
++/add app.py static/js/main.js 
+
+# 2024-10-02 01:01:13.820522
++Currently to use the app, user will have to click `Start Recording` then talk then `Stop Recordi
++ng`. Only then will backend process the audio and transform speech to text and display the text on
++ the frontend. What i would like to do is click `Start Recording` then allow the user to talk cont
++inuously. Then the frontend will detect if audio from mic is silent for atleast 0.3 seconds. then 
++transcribe the current audio but still continue audio recording in the frontent and only when user
++ press `Stop Recording` to stop recording. When the audio is already sent to transcribed backend d
++elete the already sent audio file. 
+
+# 2024-10-02 01:03:55.301304
++Uncaught SyntaxError: Identifier 'mediaRecorder' has already been declared (at main.js:114:5)
+
+# 2024-10-02 01:23:13.127452
++/add templates/index.html static/js/main.js
+
+# 2024-10-02 01:25:06.231955
++when audio is displayed please display the text  with time and text/transcript. Also always display the latest text on the top 
+
+# 2024-10-02 01:25:29.126613
++Yes
+
+# 2024-10-02 01:26:08.045628
++/clear 
+
+# 2024-10-02 01:26:11.807337
++when audio is displayed please display the text  with time and text/transcript. Also always display the latest text on the top. 
+
+# 2024-10-02 01:28:18.980322
++/clear 
+
+# 2024-10-02 01:28:37.772852
++please create a dockerfile for this project. 
+
+# 2024-10-02 01:28:54.506808
++Yes
+
+# 2024-10-02 01:29:27.222449
++No
+
+# 2024-10-02 01:29:54.512571
++/add CONVENTIONS.md
+
+# 2024-10-02 01:30:10.761034
++update  dockerfile for this project. 
+
+# 2024-10-02 01:31:08.364482
++this project is not using flask. Its using fastapi 
+
+# 2024-10-03 00:42:13.487612
++/add app.py
+
+# 2024-10-03 00:44:27.887321
++in function `transcribe` after tts the value is stored in variable `transcription`. Please do openai api call for prompt completion. I want to translate text from japanese to english. then return the translated text as the http response 
+
+# 2024-10-03 00:48:04.463825
++n
+
+# 2024-10-03 00:51:08.723979
++/add static/js/main.js templates/index.html
+
+# 2024-10-03 00:52:08.100207
++the output of `transcribe` endpoint is now ```{"original_text": transcription, "translated_text": translation}```. Please display both translated_text and original_text. 
+
+# 2024-10-03 00:57:29.241658
++/clear
+
+# 2024-10-03 00:57:54.642162
++/drop static/js/main.js
+
+# 2024-10-03 00:57:57.314396
++/drop templates/index.html
+
+# 2024-10-03 00:58:00.665583
++/add CONVENTIONS.md
+
+# 2024-10-03 00:58:21.776657
++/ask is it possible to do an async call for openai chat completion ? 
+
+# 2024-10-03 00:59:32.635088
++convert openai client to use async for both chat completion and transcriptions
+
+# 2024-10-03 01:03:52.164579
++/clear
+
+# 2024-10-03 21:45:30.110523
++/add static/js/main.js
+
+# 2024-10-03 21:45:34.614558
++templates/index.html
+
+# 2024-10-03 21:45:39.287390
++y
+
+# 2024-10-03 21:45:55.791017
++/add static/css/styles.css
+
+# 2024-10-03 21:46:04.588283
++/add CONVENTIONS.md
+
+# 2024-10-03 21:47:48.030391
++/architect i would like to change the `main.js` constant SILENCE_THRESHOLD to be a parameter set in the frontend UI. 
+
+# 2024-10-03 21:49:04.429726
++Yes
+
+# 2024-10-03 21:49:41.706034
++/clear 
+
+# 2024-10-03 21:49:57.199739
++/architect i would like to change the `main.js` constant SILENCE_DURATION to be a parameter set in the frontend UI. 
+
+# 2024-10-03 21:50:14.298482
++yes
+
+# 2024-10-03 21:54:12.795147
++/clear
