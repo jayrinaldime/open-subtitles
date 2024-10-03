@@ -19,6 +19,11 @@
              <input type="range" id="silenceDuration" min="100" max="2000" step="100" value="300">
              <span id="silenceDurationValue">300</span>
          </div>
+         <div class="control-group">
+             <label for="maxAudioLevelThreshold">Max Audio Level Threshold:</label>
+             <input type="range" id="maxAudioLevelThreshold" min="1" max="50" step="1" value="10">
+             <span id="maxAudioLevelThresholdValue">10</span>
+         </div>
          <button id="startRecording">Start Recording</button>                                     
          <button id="stopRecording" disabled>Stop Recording</button>                              
          <div id="audioLevelContainer" style="display: none;">

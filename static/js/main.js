@@ -8,9 +8,14 @@ let isSilent = true;
 let audioLevelUpdateInterval;
 let currentAudioLevel = 0;
 let maxAudioLevel = 0
+let maxAudioLevelThreshold = 10;
 
 document.getElementById('startRecording').addEventListener('click', startRecording);
 document.getElementById('stopRecording').addEventListener('click', stopRecording);
+document.getElementById('maxAudioLevelThreshold').addEventListener('input', function() {
+    maxAudioLevelThreshold = parseInt(this.value);
+    document.getElementById('maxAudioLevelThresholdValue').textContent = maxAudioLevelThreshold;
+});
 document.getElementById('silenceThreshold').addEventListener('input', function() {
     silenceThreshold = parseFloat(this.value);
     document.getElementById('silenceThresholdValue').textContent = silenceThreshold.toFixed(2);
@@ -135,7 +140,7 @@ function stopRecording() {
 }
 
 function sendAudioToServer(audioBlob) {
-    if (maxAudioLevel < 10) {
+    if (maxAudioLevel < maxAudioLevelThreshold) {
         return;
     }
     const formData = new FormData();
