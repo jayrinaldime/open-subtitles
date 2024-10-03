@@ -159,6 +159,13 @@ function toggleRecording() {
     updateRecordingState();
 }
 
+function updateRecordingState() {
+    const recordingIndicator = document.getElementById('recordingIndicator');
+    toggleRecordingButton.setAttribute('aria-pressed', isRecording);
+    toggleRecordingButton.textContent = isRecording ? 'Stop Recording' : 'Start Recording';
+    recordingIndicator.style.display = isRecording ? 'inline-block' : 'none';
+}
+
 function startRecording() {
     startContinuousRecording();
     isRecording = true;
