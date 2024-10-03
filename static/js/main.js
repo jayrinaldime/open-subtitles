@@ -4,6 +4,7 @@ let isRecording = false;
 let silenceDetectionTimer;
 let silenceThreshold = 0.6;
 let silenceDuration = 300;
+let audioLevelUpdateInterval;
 
 document.getElementById('startRecording').addEventListener('click', startRecording);
 document.getElementById('stopRecording').addEventListener('click', stopRecording);
@@ -54,6 +55,13 @@ function detectSilence(stream) {
             sum += Math.abs(dataArray[i] - 128);
         }
         const average = sum / bufferLength;
+    
+        // Update the audio level display
+        const audioLevelElement = document.getElementById('audioLevel');
+        if (audioLevelElement) {
+            audioLevelElement.textContent = average.toFixed(2);
+        }
+
         if (average < silenceThreshold) {
             if (!silenceDetectionTimer) {
                 silenceDetectionTimer = setTimeout(() => {
@@ -85,6 +93,12 @@ function startRecording() {
     startContinuousRecording();
     document.getElementById('startRecording').disabled = true;
     document.getElementById('stopRecording').disabled = false;
+    
+    // Show audio level element
+    const audioLevelContainer = document.getElementById('audioLevelContainer');
+    if (audioLevelContainer) {
+        audioLevelContainer.style.display = 'block';
+    }
 }
 
 function stopRecording() {
@@ -94,6 +108,12 @@ function stopRecording() {
     }
     document.getElementById('startRecording').disabled = false;
     document.getElementById('stopRecording').disabled = true;
+    
+    // Hide audio level element
+    const audioLevelContainer = document.getElementById('audioLevelContainer');
+    if (audioLevelContainer) {
+        audioLevelContainer.style.display = 'none';
+    }
 }
 
 function sendAudioToServer(audioBlob) {
