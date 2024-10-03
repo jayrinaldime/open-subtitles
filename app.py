@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,20 +9,6 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
-
-async def translate_to_english(text: str) -> str:
-    try:
-        response = await client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a translator. Translate the following text to English. Only return the translated text. Do **not** state the original input and do **NOT** summarize"},
-                {"role": "user", "content": text}
-            ]
-        )
-        return response.choices[0].message.content.strip()
-    except Exception as e:
-        print(f"Translation error: {str(e)}")
-        return "Translation failed"
 
 app = FastAPI()
 
@@ -49,17 +35,6 @@ async def index():
 class TranscriptionResponse(BaseModel):
     original_text: str
     translated_text: str
-
-from fastapi import FastAPI, File, UploadFile, HTTPException, Form
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
-from fastapi.middleware.cors import CORSMiddleware
-from openai import OpenAI
-import os
-from pydantic import BaseModel
-from dotenv import load_dotenv
-
-# ... (keep the existing imports and setup)
 
 @app.post("/transcribe", response_model=TranscriptionResponse)
 async def transcribe(audio: UploadFile = File(...)):
@@ -88,6 +63,22 @@ async def transcribe(audio: UploadFile = File(...)):
         return {"original_text": transcription, "translated_text": translation}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+async def translate_to_english(text: str) -> str:
+    try:
+        response = await client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a translator. Translate the following text to English. Only return the translated text. Do **not** state the original input and do **NOT** summarize"},
+                {"role": "user", "content": text}
+            ]
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"Translation error: {str(e)}")
+        return "Translation failed"
+
 
 if __name__ == "__main__":
     import uvicorn
