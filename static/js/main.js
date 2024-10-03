@@ -207,8 +207,8 @@ function addTranscriptionToUI(originalText, translatedText) {
     translatedTextElement.textContent = translatedText;
     
     transcriptionElement.appendChild(timestampElement);
-    transcriptionElement.appendChild(originalTextElement);
     transcriptionElement.appendChild(translatedTextElement);
+    transcriptionElement.appendChild(originalTextElement);
     
     // Store the original and translated text as data attributes
     transcriptionElement.dataset.originalText = originalText;
@@ -228,8 +228,8 @@ function updateTranscriptLayout() {
         
         if (transcriptLayout === 'detailed') {
             originalText.style.display = 'block';
-            originalText.textContent = entry.dataset.originalText;
-            translatedText.textContent = 'Translated: ' + entry.dataset.translatedText;
+            originalText.textContent = 'Original: ' +entry.dataset.originalText;
+            translatedText.textContent =  entry.dataset.translatedText;
         } else { // compact layout
             originalText.style.display = 'none';
             translatedText.textContent = entry.dataset.translatedText;
