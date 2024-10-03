@@ -10,6 +10,7 @@ let currentAudioLevel = 0;
 let maxAudioLevel = 0
 let maxAudioLevelThreshold = 10;
 let transcriptLayout = 'compact';
+let debugMode = false;
 
 document.getElementById('toggleRecording').addEventListener('click', toggleRecording);
 document.getElementById('settingsButton').addEventListener('click', toggleSettings);
@@ -29,6 +30,17 @@ document.getElementById('silenceDuration').addEventListener('input', function() 
     silenceDuration = parseInt(this.value);
     document.getElementById('silenceDurationValue').textContent = silenceDuration;
 });
+document.getElementById('debugMode').addEventListener('change', function() {
+    debugMode = this.checked;
+    updateAudioLevelVisibility();
+});
+
+function updateAudioLevelVisibility() {
+    const audioLevelContainer = document.getElementById('audioLevelContainer');
+    if (audioLevelContainer) {
+        audioLevelContainer.style.display = debugMode && isRecording ? 'block' : 'none';
+    }
+}
 
 function toggleSettings() {
     const settingsPanel = document.getElementById('settingsPanel');
@@ -140,12 +152,7 @@ function toggleRecording() {
 function startRecording() {
     startContinuousRecording();
     isRecording = true;
-    
-    // Show audio level element
-    const audioLevelContainer = document.getElementById('audioLevelContainer');
-    if (audioLevelContainer) {
-        audioLevelContainer.style.display = 'block';
-    }
+    updateAudioLevelVisibility();
 }
 
 function stopRecording() {
@@ -153,12 +160,7 @@ function stopRecording() {
     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
     }
-    
-    // Hide audio level element
-    const audioLevelContainer = document.getElementById('audioLevelContainer');
-    if (audioLevelContainer) {
-        audioLevelContainer.style.display = 'none';
-    }
+    updateAudioLevelVisibility();
 }
 
 function sendAudioToServer(audioBlob) {
