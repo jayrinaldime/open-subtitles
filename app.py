@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from ai_interface import OpenAIInterface
+from ai_interface import get_ai_interface
 
 # Load environment variables
 load_dotenv()
@@ -15,7 +15,8 @@ __version__ = "0.0.5"
 
 app = FastAPI(title="Audio Transcribe & Translate", version=__version__)
 
-ai_interface = OpenAIInterface()
+AI_PROVIDER = os.environ.get("AI_PROVIDER", "openai").lower()
+ai_interface = get_ai_interface(AI_PROVIDER)
 
 # Configure CORS
 app.add_middleware(
@@ -70,8 +71,8 @@ async def transcribe(
        raise HTTPException(status_code=400, detail=f"Unsupported file format. Supported formats are: {', '.join(supported_formats)}")
 
     try:
-        # Log the audio level
-        logger.info(f"Received audio with average level: {audio_level}")
+        # Log the audio level and AI provider
+        logger.info(f"Received audio with average level: {audio_level}, using AI provider: {AI_PROVIDER}")
 
         # Read the content of the uploaded file
         audio_content = await audio.read()

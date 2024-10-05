@@ -1,6 +1,6 @@
+import os
 from abc import ABC, abstractmethod
 from openai import AsyncOpenAI
-import os
 
 class AIInterface(ABC):
     @abstractmethod
@@ -43,3 +43,31 @@ class OpenAIInterface(AIInterface):
             messages=messages
         )
         return response.choices[0].message.content.strip()
+
+class GrokInterface(AIInterface):
+    def __init__(self):
+        # Initialize Grok client here (you'll need to implement this based on Grok's API)
+        self.client = None  # Replace with actual Grok client initialization
+        self.SYSTEM_PROMPT_TRANSLATE = os.environ.get("SYSTEM_PROMPT_TRANSLATE") or """
+        You are a helpful translator.
+        Translate the text to the {LANGUAGE} language and only return the translated text.
+        Do **not** state the original input and do **NOT** summarize!
+        """
+
+    async def transcribe(self, audio_content: bytes, file_extension: str, source_language: str = "auto") -> str:
+        # Implement Grok transcription logic here
+        # This is a placeholder implementation
+        return "Grok transcription not implemented yet"
+
+    async def translate(self, text: str, target_language: str) -> str:
+        # Implement Grok translation logic here
+        # This is a placeholder implementation
+        return f"Grok translation to {target_language} not implemented yet"
+
+def get_ai_interface(provider: str = "openai") -> AIInterface:
+    if provider.lower() == "openai":
+        return OpenAIInterface()
+    elif provider.lower() == "grok":
+        return GrokInterface()
+    else:
+        raise ValueError(f"Unsupported AI provider: {provider}")
