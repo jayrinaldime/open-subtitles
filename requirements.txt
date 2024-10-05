@@ -4,8 +4,4 @@ openai
 python-multipart
 python-dotenv
 groq
-aiohttp
 ollama
-
-# Environment variables:
-# OLLAMA_HOST: URL for Ollama server (default: http://localhost:11434)
