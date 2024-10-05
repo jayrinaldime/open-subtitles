@@ -1,10 +1,12 @@
 import os
 from .abstract_services import TranslationService
-import ollama
+from ollama import AsyncClient
 
 class OllamaTranslationService(TranslationService):
     def __init__(self):
         self.model = os.environ.get("OLLAMA_MODEL", "llama2")
+        self.host = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
+        self.client = AsyncClient(host=self.host)
         self.SYSTEM_PROMPT_TRANSLATE = os.environ.get("SYSTEM_PROMPT_TRANSLATE") or """
         You are a helpful translator.
         Translate the text to the {LANGUAGE} language and only return the translated text.
@@ -14,11 +16,11 @@ class OllamaTranslationService(TranslationService):
     async def translate(self, text: str, target_language: str) -> str:
         prompt = self.SYSTEM_PROMPT_TRANSLATE.format(LANGUAGE=target_language) + "\n\n" + text
         
-        response = await ollama.generate(model=self.model, prompt=prompt)
+        response = await self.client.generate(model=self.model, prompt=prompt)
         return response['response'].strip()
 
     async def stream_translate(self, text: str, target_language: str):
         prompt = self.SYSTEM_PROMPT_TRANSLATE.format(LANGUAGE=target_language) + "\n\n" + text
         
-        async for part in ollama.generate(model=self.model, prompt=prompt, stream=True):
+        async for part in self.client.generate(model=self.model, prompt=prompt, stream=True):
             yield part['response']
