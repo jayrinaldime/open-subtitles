@@ -122,7 +122,6 @@ async def translate_text(text: str, target_language: str) -> str:
                 {"role": "system", "content": language_prompt},
                 {"role": "user", "content": text}
             ]
-        print(messages)
         response = await client.chat.completions.create(
             model=LLM_CHAT_MODEL,
             messages=messages
