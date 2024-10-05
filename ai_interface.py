@@ -44,10 +44,10 @@ class OpenAIService(AIService):
         )
         return response.choices[0].message.content.strip()
 
-class GrokService(AIService):
+class GroqService(AIService):
     def __init__(self):
-        # Initialize Grok client here (you'll need to implement this based on Grok's API)
-        self.client = None  # Replace with actual Grok client initialization
+        # Initialize Groq client here (you'll need to implement this based on Groq's API)
+        self.client = None  # Replace with actual Groq client initialization
         self.SYSTEM_PROMPT_TRANSLATE = os.environ.get("SYSTEM_PROMPT_TRANSLATE") or """
         You are a helpful translator.
         Translate the text to the {LANGUAGE} language and only return the translated text.
@@ -55,19 +55,19 @@ class GrokService(AIService):
         """
 
     async def transcribe(self, audio_content: bytes, file_extension: str, source_language: str = "auto") -> str:
-        # Implement Grok transcription logic here
+        # Implement Groq transcription logic here
         # This is a placeholder implementation
-        return "Grok transcription not implemented yet"
+        return "Groq transcription not implemented yet"
 
     async def translate(self, text: str, target_language: str) -> str:
-        # Implement Grok translation logic here
+        # Implement Groq translation logic here
         # This is a placeholder implementation
-        return f"Grok translation to {target_language} not implemented yet"
+        return f"Groq translation to {target_language} not implemented yet"
 
 def get_ai_service(provider: str = "openai") -> AIService:
     if provider.lower() == "openai":
         return OpenAIService()
-    elif provider.lower() == "grok":
-        return GrokService()
+    elif provider.lower() == "groq":
+        return GroqService()
     else:
         raise ValueError(f"Unsupported AI provider: {provider}")
