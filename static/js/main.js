@@ -11,6 +11,8 @@ let maxAudioLevel = 0
 let maxAudioLevelThreshold = 10;
 let transcriptLayout = 'compact';
 let debugMode = false;
+let sourceLanguage = 'auto';
+let targetLanguage = 'en';
 
 const toggleRecordingButton = document.getElementById('toggleRecording');
 toggleRecordingButton.addEventListener('click', toggleRecording);
@@ -22,7 +24,9 @@ function saveSettings() {
         silenceThreshold,
         silenceDuration,
         transcriptLayout,
-        debugMode
+        debugMode,
+        sourceLanguage,
+        targetLanguage
     }));
 }
 
@@ -34,6 +38,8 @@ function loadSettings() {
         silenceDuration = savedSettings.silenceDuration;
         transcriptLayout = savedSettings.transcriptLayout;
         debugMode = savedSettings.debugMode;
+        sourceLanguage = savedSettings.sourceLanguage || 'auto';
+        targetLanguage = savedSettings.targetLanguage || 'en';
 
         document.getElementById('maxAudioLevelThreshold').value = maxAudioLevelThreshold;
         document.getElementById('maxAudioLevelThresholdValue').textContent = maxAudioLevelThreshold;
@@ -43,12 +49,24 @@ function loadSettings() {
         document.getElementById('silenceDurationValue').textContent = silenceDuration;
         document.getElementById('transcriptLayout').value = transcriptLayout;
         document.getElementById('debugMode').checked = debugMode;
+        document.getElementById('sourceLanguage').value = sourceLanguage;
+        document.getElementById('targetLanguage').value = targetLanguage;
         updateAudioLevelVisibility();
         updateTranscriptLayout();
     }
 }
 
 loadSettings();
+
+document.getElementById('sourceLanguage').addEventListener('change', function() {
+    sourceLanguage = this.value;
+    saveSettings();
+});
+
+document.getElementById('targetLanguage').addEventListener('change', function() {
+    targetLanguage = this.value;
+    saveSettings();
+});
 
 document.getElementById('maxAudioLevelThreshold').addEventListener('input', function() {
     maxAudioLevelThreshold = parseInt(this.value);
@@ -228,6 +246,8 @@ function sendAudioToServer(audioBlob) {
     formData.append('audio', audioBlob, 'audio.wav');
     formData.append('audio_level', currentAudioLevel.toFixed(2));
     formData.append('max_audio_level', maxAudioLevel.toFixed(2));
+    formData.append('source_language', sourceLanguage);
+    formData.append('target_language', targetLanguage);
 
     fetch('/transcribe', {
         method: 'POST',
