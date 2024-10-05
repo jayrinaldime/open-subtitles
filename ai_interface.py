@@ -3,25 +3,20 @@ from abc import ABC, abstractmethod
 from openai import AsyncOpenAI
 import groq
 
-class AIService(ABC):
+class TranscriptionService(ABC):
     @abstractmethod
     async def transcribe(self, audio_content: bytes, file_extension: str, source_language: str = "auto") -> str:
         pass
 
+class TranslationService(ABC):
     @abstractmethod
     async def translate(self, text: str, target_language: str) -> str:
         pass
 
-class OpenAIService(AIService):
+class OpenAITranscriptionService(TranscriptionService):
     def __init__(self):
         self.client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-        self.LLM_CHAT_MODEL = os.environ.get("LLM_CHAT_MODEL") or "gpt-4o-mini"
         self.LLM_STT_MODEL = os.environ.get("LLM_STT_MODEL") or "whisper-1"
-        self.SYSTEM_PROMPT_TRANSLATE = os.environ.get("SYSTEM_PROMPT_TRANSLATE") or """
-        You are a helpful translator.
-        Translate the text to the {LANGUAGE} language and only return the translated text.
-        Do **not** state the original input and do **NOT** summarize!
-        """
 
     async def transcribe(self, audio_content: bytes, file_extension: str, source_language: str = "auto") -> str:
         optional_params = {"language": source_language} if source_language != "auto" else {}
@@ -32,6 +27,16 @@ class OpenAIService(AIService):
             **optional_params
         )
         return transcription
+
+class OpenAITranslationService(TranslationService):
+    def __init__(self):
+        self.client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        self.LLM_CHAT_MODEL = os.environ.get("LLM_CHAT_MODEL") or "gpt-3.5-turbo"
+        self.SYSTEM_PROMPT_TRANSLATE = os.environ.get("SYSTEM_PROMPT_TRANSLATE") or """
+        You are a helpful translator.
+        Translate the text to the {LANGUAGE} language and only return the translated text.
+        Do **not** state the original input and do **NOT** summarize!
+        """
 
     async def translate(self, text: str, target_language: str) -> str:
         language_prompt = self.SYSTEM_PROMPT_TRANSLATE.format(LANGUAGE=target_language)
@@ -45,27 +50,30 @@ class OpenAIService(AIService):
         )
         return response.choices[0].message.content.strip()
 
-class GroqService(AIService):
+class GroqTranscriptionService(TranscriptionService):
+    def __init__(self):
+        self.client = groq.AsyncGroq(api_key=os.environ.get("GROQ_API_KEY"))
+        self.LLM_STT_MODEL = os.environ.get("LLM_STT_MODEL") or "whisper-large-v3"
+
+    async def transcribe(self, audio_content: bytes, file_extension: str, source_language: str = "auto") -> str:
+        optional_params = {"language": source_language} if source_language != "auto" else {}
+        transcription = await self.client.audio.transcriptions.create(
+            model=self.LLM_STT_MODEL,
+            file=("audio.{}".format(file_extension), audio_content),
+            response_format="text",
+            **optional_params
+        )
+        return transcription
+
+class GroqTranslationService(TranslationService):
     def __init__(self):
         self.client = groq.AsyncGroq(api_key=os.environ.get("GROQ_API_KEY"))
         self.LLM_CHAT_MODEL = os.environ.get("GROQ_CHAT_MODEL") or "llama-3.2-3b-preview"
-        self.LLM_STT_MODEL = os.environ.get("LLM_STT_MODEL") or "whisper-large-v3"
         self.SYSTEM_PROMPT_TRANSLATE = os.environ.get("SYSTEM_PROMPT_TRANSLATE") or """
         You are a helpful translator.
         Translate the text to the {LANGUAGE} language and only return the translated text.
         Do **not** state the original input and do **NOT** summarize!
         """
-
-    async def transcribe(self, audio_content: bytes, file_extension: str, source_language: str = "auto") -> str:
-        optional_params = {"language": source_language} if source_language != "auto" else {}
-        
-        transcription = await self.client.audio.transcriptions.create(
-            model=self.LLM_STT_MODEL,
-            file=("audio.{}".format(file_extension), audio_content),
-            response_format="text",
-            **optional_params
-        )
-        return transcription
 
     async def translate(self, text: str, target_language: str) -> str:
         language_prompt = self.SYSTEM_PROMPT_TRANSLATE.format(LANGUAGE=target_language)
@@ -79,23 +87,18 @@ class GroqService(AIService):
         )
         return response.choices[0].message.content.strip()
 
-class HybridService(AIService):
-    def __init__(self):
-        self.openai_service = OpenAIService()
-        self.groq_service = GroqService()
-
-    async def transcribe(self, audio_content: bytes, file_extension: str, source_language: str = "auto") -> str:
-        return await self.openai_service.transcribe(audio_content, file_extension, source_language)
-
-    async def translate(self, text: str, target_language: str) -> str:
-        return await self.groq_service.translate(text, target_language)
-
-def get_ai_service(provider: str = "openai") -> AIService:
+def get_transcription_service(provider: str = "openai") -> TranscriptionService:
     if provider.lower() == "openai":
-        return OpenAIService()
+        return OpenAITranscriptionService()
     elif provider.lower() == "groq":
-        return GroqService()
-    elif provider.lower() == "hybrid":
-        return HybridService()
+        return GroqTranscriptionService()
     else:
-        raise ValueError(f"Unsupported AI provider: {provider}")
+        raise ValueError(f"Unsupported transcription provider: {provider}")
+
+def get_translation_service(provider: str = "openai") -> TranslationService:
+    if provider.lower() == "openai":
+        return OpenAITranslationService()
+    elif provider.lower() == "groq":
+        return GroqTranslationService()
+    else:
+        raise ValueError(f"Unsupported translation provider: {provider}")

@@ -6,17 +6,20 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from ai_interface import get_ai_service
+from ai_interface import get_transcription_service, get_translation_service
 
 # Load environment variables
 load_dotenv()
 
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 
 app = FastAPI(title="Audio Transcribe & Translate", version=__version__)
 
-AI_PROVIDER = os.environ.get("AI_PROVIDER", "openai").lower()
-ai_service = get_ai_service(AI_PROVIDER)
+TRANSCRIPTION_PROVIDER = os.environ.get("TRANSCRIPTION_PROVIDER", "openai").lower()
+TRANSLATION_PROVIDER = os.environ.get("TRANSLATION_PROVIDER", "openai").lower()
+
+transcription_service = get_transcription_service(TRANSCRIPTION_PROVIDER)
+translation_service = get_translation_service(TRANSLATION_PROVIDER)
 
 # Configure CORS
 app.add_middleware(
@@ -71,14 +74,14 @@ async def transcribe(
        raise HTTPException(status_code=400, detail=f"Unsupported file format. Supported formats are: {', '.join(supported_formats)}")
 
     try:
-        # Log the audio level and AI provider
-        logger.info(f"Received audio with average level: {audio_level}, using AI provider: {AI_PROVIDER}")
+        # Log the audio level and providers
+        logger.info(f"Received audio with average level: {audio_level}, using Transcription provider: {TRANSCRIPTION_PROVIDER}, Translation provider: {TRANSLATION_PROVIDER}")
 
         # Read the content of the uploaded file
         audio_content = await audio.read()
         
         # Use the content for transcription
-        transcription = await ai_service.transcribe(audio_content, file_extension, source_language)
+        transcription = await transcription_service.transcribe(audio_content, file_extension, source_language)
         
         # Delete the audio content after transcription
         del audio_content
@@ -89,7 +92,7 @@ async def transcribe(
         
         # Translate the transcribed text to the target language
         language_name = LANGUAGE_NAMES[target_language]
-        translation = await ai_service.translate(transcription, language_name)
+        translation = await translation_service.translate(transcription, language_name)
         
         return {"original_text": transcription, "translated_text": translation}
     except Exception as e:
