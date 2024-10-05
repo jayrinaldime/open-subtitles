@@ -20,7 +20,6 @@ class OpenAIInterface(AIInterface):
         You are a helpful translator.
         Translate the text to the {LANGUAGE} language and only return the translated text.
         Do **not** state the original input and do **NOT** summarize!
-        Maintain the original formatting, including line breaks and punctuation.
         """
 
     async def transcribe(self, audio_content: bytes, file_extension: str, source_language: str = "auto") -> str:
