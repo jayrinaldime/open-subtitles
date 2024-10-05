@@ -257,6 +257,8 @@ function sendAudioToServer(audioBlob) {
     .then(data => {
         if (data.translated_text && data.translated_text.trim() !== '') {
             addTranscriptionToUI(data.original_text, data.translated_text);
+        } else if (data.translated_text !== undefined) {
+            console.debug('Received blank translation, skipping UI update:', data);
         } else if (data.error) {
             console.error('Error:', data.error);
         }
