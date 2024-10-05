@@ -100,6 +100,10 @@ async def transcribe(
         # Delete the audio content after transcription
         del audio_content
         
+        # Check if transcription is empty
+        if not transcription.strip():
+            return {"original_text": "", "translated_text": ""}
+        
         # Translate the transcribed text to the target language
         language_name = LANGUAGE_NAMES[target_language]
         translation = await translate_text(transcription, language_name)
