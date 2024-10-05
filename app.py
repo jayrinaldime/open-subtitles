@@ -53,14 +53,17 @@ logger = logging.getLogger(__name__)
 # Mount the static directory
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
 @app.get("/", response_class=HTMLResponse)
 async def index():
     with open("templates/index.html", "r") as file:
         return file.read()
 
+
 class TranscriptionResponse(BaseModel):
     original_text: str
     translated_text: str
+
 
 @app.post("/transcribe", response_model=TranscriptionResponse)
 async def transcribe(
@@ -68,40 +71,58 @@ async def transcribe(
     audio_level: float = Form(...),
     max_audio_level: float = Form(...),
     source_language: str = Form(default="auto"),
-    target_language: str = Form(default="en")
+    target_language: str = Form(default="en"),
 ):
-    supported_formats = ['flac', 'm4a', 'mp3', 'mp4', 'mpeg', 'mpga', 'oga', 'ogg', 'wav', 'webm']
-    file_extension = audio.filename.split('.')[-1].lower()
+    supported_formats = [
+        "flac",
+        "m4a",
+        "mp3",
+        "mp4",
+        "mpeg",
+        "mpga",
+        "oga",
+        "ogg",
+        "wav",
+        "webm",
+    ]
+    file_extension = audio.filename.split(".")[-1].lower()
     if file_extension not in supported_formats:
-       raise HTTPException(status_code=400, detail=f"Unsupported file format. Supported formats are: {', '.join(supported_formats)}")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file format. Supported formats are: {', '.join(supported_formats)}",
+        )
 
     try:
         # Log the audio level and providers
-        logger.info(f"Received audio with average level: {audio_level}, using Transcription provider: {TRANSCRIPTION_PROVIDER}, Translation provider: {TRANSLATION_PROVIDER}")
+        logger.info(
+            f"Received audio with average level: {audio_level}, using Transcription provider: {TRANSCRIPTION_PROVIDER}, Translation provider: {TRANSLATION_PROVIDER}"
+        )
 
         # Read the content of the uploaded file
         audio_content = await audio.read()
-        
+
         # Use the content for transcription
-        transcription = await transcription_service.transcribe(audio_content, file_extension, source_language)
-        
+        transcription = await transcription_service.transcribe(
+            audio_content, file_extension, source_language
+        )
+
         # Delete the audio content after transcription
         del audio_content
-        
+
         # Check if transcription is empty
         if not transcription.strip():
             return {"original_text": "", "translated_text": ""}
-        
+
         # Translate the transcribed text to the target language
         language_name = LANGUAGE_NAMES[target_language]
         translation = await translation_service.translate(transcription, language_name)
-        
+
         return {"original_text": transcription, "translated_text": translation}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -3,6 +3,7 @@ from .openai_services import OpenAITranscriptionService, OpenAITranslationServic
 from .groq_services import GroqTranscriptionService, GroqTranslationService
 from .ollama_services import OllamaTranslationService
 
+
 def get_transcription_service(provider: str = "openai") -> TranscriptionService:
     if provider.lower() == "openai":
         return OpenAITranscriptionService()
@@ -10,6 +11,7 @@ def get_transcription_service(provider: str = "openai") -> TranscriptionService:
         return GroqTranscriptionService()
     else:
         raise ValueError(f"Unsupported transcription provider: {provider}")
+
 
 def get_translation_service(provider: str = "openai") -> TranslationService:
     if provider.lower() == "openai":
