@@ -11,7 +11,9 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-app = FastAPI()
+__version__ = "0.0.5"
+
+app = FastAPI(title="Audio Transcribe & Translate", version=__version__)
 
 # Configure CORS
 app.add_middleware(
