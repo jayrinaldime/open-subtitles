@@ -3,10 +3,10 @@ import logging
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
-from openai import AsyncOpenAI
 import os
 from pydantic import BaseModel
 from dotenv import load_dotenv
+from ai_interface import OpenAIInterface
 
 # Load environment variables
 load_dotenv()
@@ -14,6 +14,8 @@ load_dotenv()
 __version__ = "0.0.5"
 
 app = FastAPI(title="Audio Transcribe & Translate", version=__version__)
+
+ai_interface = OpenAIInterface()
 
 # Configure CORS
 app.add_middleware(
@@ -24,18 +26,6 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-# Initialize async OpenAI client
-client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-
-SYSTEM_PROMPT_TRANSLATE = os.environ.get("SYSTEM_PROMPT_TRANSLATE") or """
-You are a helpful translator.
-Translate the text to the {LANGUAGE} language and only return the translated text.
-Do **not** state the original input and do **NOT** summarize!
-Maintain the original formatting, including line breaks and punctuation.
-"""
-
-LLM_CHAT_MODEL = os.environ.get("LLM_CHAT_MODEL") or "gpt-4o-mini"
-LLM_STT_MODEL = os.environ.get("LLM_STT_MODEL") or "whisper-1"
 
 # Dictionary mapping language codes to full names
 LANGUAGE_NAMES = {
@@ -87,17 +77,7 @@ async def transcribe(
         audio_content = await audio.read()
         
         # Use the content for transcription
-
-        if source_language!= "auto":
-            optional_params = {"language": source_language}
-        else: 
-            optional_params = {}
-        transcription = await client.audio.transcriptions.create(
-            model=LLM_STT_MODEL,
-            file=("audio.{}".format(file_extension), audio_content),
-            response_format="text",
-            **optional_params
-        )
+        transcription = await ai_interface.transcribe(audio_content, file_extension, source_language)
         
         # Delete the audio content after transcription
         del audio_content
@@ -108,28 +88,12 @@ async def transcribe(
         
         # Translate the transcribed text to the target language
         language_name = LANGUAGE_NAMES[target_language]
-        translation = await translate_text(transcription, language_name)
+        translation = await ai_interface.translate(transcription, language_name)
         
         return {"original_text": transcription, "translated_text": translation}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
-async def translate_text(text: str, target_language: str) -> str:
-    try:
-        language_prompt = SYSTEM_PROMPT_TRANSLATE.format(LANGUAGE=target_language)
-        messages = [
-                {"role": "system", "content": language_prompt},
-                {"role": "user", "content": text}
-            ]
-        response = await client.chat.completions.create(
-            model=LLM_CHAT_MODEL,
-            messages=messages
-        )
-        return response.choices[0].message.content.strip()
-    except Exception as e:
-        print(f"Translation error: {str(e)}")
-        return f"Translation to {target_language} failed"
 
 
 if __name__ == "__main__":
