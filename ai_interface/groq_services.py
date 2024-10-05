@@ -20,7 +20,7 @@ class GroqTranscriptionService(TranscriptionService):
 class GroqTranslationService(TranslationService):
     def __init__(self):
         self.client = groq.AsyncGroq(api_key=os.environ.get("GROQ_API_KEY"))
-        self.LLM_CHAT_MODEL = os.environ.get("GROQ_CHAT_MODEL") or "llama-3.2-3b-preview"
+        self.LLM_CHAT_MODEL = os.environ.get("LLM_CHAT_MODEL") or "llama-3.2-3b-preview"
         self.SYSTEM_PROMPT_TRANSLATE = os.environ.get("SYSTEM_PROMPT_TRANSLATE") or """
         You are a helpful translator.
         Translate the text to the {LANGUAGE} language and only return the translated text.
