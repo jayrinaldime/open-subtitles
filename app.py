@@ -17,6 +17,8 @@ app = FastAPI(title="Audio Transcribe & Translate", version=__version__)
 
 TRANSCRIPTION_PROVIDER = os.environ.get("TRANSCRIPTION_PROVIDER", "openai").lower()
 TRANSLATION_PROVIDER = os.environ.get("TRANSLATION_PROVIDER", "openai").lower()
+if TRANSLATION_PROVIDER not in ["openai", "groq", "ollama"]:
+    raise ValueError(f"Unsupported translation provider: {TRANSLATION_PROVIDER}")
 
 transcription_service = get_transcription_service(TRANSCRIPTION_PROVIDER)
 translation_service = get_translation_service(TRANSLATION_PROVIDER)
