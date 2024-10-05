@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from ai_interface import get_ai_interface
+from ai_interface import get_ai_service
 
 # Load environment variables
 load_dotenv()
@@ -16,7 +16,7 @@ __version__ = "0.0.5"
 app = FastAPI(title="Audio Transcribe & Translate", version=__version__)
 
 AI_PROVIDER = os.environ.get("AI_PROVIDER", "openai").lower()
-ai_interface = get_ai_interface(AI_PROVIDER)
+ai_service = get_ai_service(AI_PROVIDER)
 
 # Configure CORS
 app.add_middleware(
@@ -78,7 +78,7 @@ async def transcribe(
         audio_content = await audio.read()
         
         # Use the content for transcription
-        transcription = await ai_interface.transcribe(audio_content, file_extension, source_language)
+        transcription = await ai_service.transcribe(audio_content, file_extension, source_language)
         
         # Delete the audio content after transcription
         del audio_content
@@ -89,7 +89,7 @@ async def transcribe(
         
         # Translate the transcribed text to the target language
         language_name = LANGUAGE_NAMES[target_language]
-        translation = await ai_interface.translate(transcription, language_name)
+        translation = await ai_service.translate(transcription, language_name)
         
         return {"original_text": transcription, "translated_text": translation}
     except Exception as e:
