@@ -48,7 +48,8 @@ class OpenAIService(AIService):
 class GroqService(AIService):
     def __init__(self):
         self.client = groq.AsyncGroq(api_key=os.environ.get("GROQ_API_KEY"))
-        self.LLM_CHAT_MODEL = os.environ.get("GROQ_CHAT_MODEL") or "mixtral-8x7b-32768"
+        self.LLM_CHAT_MODEL = os.environ.get("GROQ_CHAT_MODEL") or "llama-3.2-3b-preview"
+        self.LLM_STT_MODEL = os.environ.get("LLM_STT_MODEL") or "whisper-large-v3"
         self.SYSTEM_PROMPT_TRANSLATE = os.environ.get("SYSTEM_PROMPT_TRANSLATE") or """
         You are a helpful translator.
         Translate the text to the {LANGUAGE} language and only return the translated text.
@@ -56,8 +57,15 @@ class GroqService(AIService):
         """
 
     async def transcribe(self, audio_content: bytes, file_extension: str, source_language: str = "auto") -> str:
-        # Groq doesn't support audio transcription, so we'll return an error message
-        return "Audio transcription is not supported by Groq."
+        optional_params = {"language": source_language} if source_language != "auto" else {}
+        
+        transcription = await self.client.audio.transcriptions.create(
+            model=self.LLM_STT_MODEL,
+            file=("audio.{}".format(file_extension), audio_content),
+            response_format="text",
+            **optional_params
+        )
+        return transcription
 
     async def translate(self, text: str, target_language: str) -> str:
         language_prompt = self.SYSTEM_PROMPT_TRANSLATE.format(LANGUAGE=target_language)
