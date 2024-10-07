@@ -5,10 +5,10 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the requirements files
-COPY requirements.txt requirements-lock.txt ./
+COPY requirements.txt ./
 
 # Install the project dependencies
-RUN pip install --no-cache-dir -r requirements-lock.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code
 COPY . .
