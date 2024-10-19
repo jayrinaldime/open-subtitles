@@ -11,7 +11,7 @@ ai_interface/openai_services.py
 app.py
 ai_interface/openai_services.py
 
-# Current Working Directory (/Users/jr/Documents/pycharm_projects/ollamastraico/open-subtitles) Files
+# Current Working Directory (open-subtitles) Files
 .env.template
 .gitignore
 app.py
