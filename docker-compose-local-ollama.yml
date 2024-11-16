@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  app:
+    image: ghcr.io/jayrinaldime/open-subtitles:latest
+    environment:
+      - OPENAI_API_KEY=your_openai_api_key_here
+      - OLLAMA_HOST=http://ollama:11434
+      - TRANSCRIPTION_PROVIDER=local
+      - TRANSLATION_PROVIDER=ollama
+      - LOG_LEVEL=INFO
+      - MAX_RETRIES=3
+      - API_TIMEOUT=30
+      - API_BASE_URL=https://api.openai.com
+      - LLM_STT_MODEL=whisper-1
+      - LLM_CHAT_MODEL=llama2
+      - SYSTEM_PROMPT_TRANSLATE=You are a helpful translator. Translate the text to the {LANGUAGE} language and only return the translated text. Do **not** state the original input and do **NOT** summarize!
+      - LOCAL_TRANSCRIPTION_ENDPOINT=http://localhost:9000/asr
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./static:/app/static
+      - ./templates:/app/templates
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama:latest
+    environment:
+      - OLLAMA_API_KEY=your_ollama_api_key_here
+    ports:
+      - "11434:11434"
