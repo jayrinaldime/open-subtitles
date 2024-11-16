@@ -348,6 +348,9 @@ function exportTranscript() {
         return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
     });
 
+    // Reverse the order of the entries
+    sortedEntries.reverse();
+
     sortedEntries.forEach(entry => {
         const timestamp = entry.querySelector('.timestamp').textContent;
         const originalText = entry.querySelector('.original-text').textContent.replace(/^Original: /, "");
