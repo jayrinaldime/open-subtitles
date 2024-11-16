@@ -1,8 +1,7 @@
 from .abstract_services import TranscriptionService, TranslationService
 from .openai_services import OpenAITranscriptionService, OpenAITranslationService
 from .groq_services import GroqTranscriptionService, GroqTranslationService
-from .ollama_services import OllamaTranslationService
-from .openai_services import LocalTranscriptionService  # Import LocalTranscriptionService
+from .ollama_services import OllamaTranslationService, LocalTranscriptionService 
 
 def get_transcription_service(provider: str = "openai") -> TranscriptionService:
     if provider.lower() == "openai":

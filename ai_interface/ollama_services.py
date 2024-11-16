@@ -1,5 +1,5 @@
 import os
-from .abstract_services import TranslationService
+from .abstract_services import TranslationService, TranscriptionService
 from ollama import AsyncClient
 
 

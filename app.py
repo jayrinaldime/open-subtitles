@@ -108,7 +108,7 @@ async def transcribe(
 
         # Perform translation if enabled
         if enable_translation:
-            translation = await translation_service.translate(transcription, source_language, target_language)
+            translation = await translation_service.translate(transcription, target_language)
             translated_text = translation
         else:
             translated_text = transcription
@@ -122,3 +122,7 @@ async def transcribe(
     finally:
         # Delete the audio content after transcription
         del audio_content
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
