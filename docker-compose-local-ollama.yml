@@ -17,7 +17,7 @@ services:
 
   # FOR GPU Speech to Text processing
   whisper-gpu:
-    image: onerahmet/openai-whisper-asr-webservice
+    image: onerahmet/openai-whisper-asr-webservice:latest-gpu
     deploy:
       resources:
         reservations:
