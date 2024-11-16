@@ -105,6 +105,20 @@ async def transcribe(
         transcription = await transcription_service.transcribe(
             audio_content, file_extension, source_language
         )
-       
+
+        # Perform translation if enabled
+        if enable_translation:
+            translation = await translation_service.translate(transcription, source_language, target_language)
+            translated_text = translation
+        else:
+            translated_text = transcription
+
+        return TranscriptionResponse(original_text=transcription, translated_text=translated_text)
+
+    except Exception as e:
+        logger.error(f"Error processing audio: {e}")
+        raise HTTPException(status_code=500, detail="Error processing audio")
+
+    finally:
         # Delete the audio content after transcription
         del audio_content
