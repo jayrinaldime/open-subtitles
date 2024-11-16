@@ -101,6 +101,66 @@ We provide sample Docker Compose files for different configurations:
     - `source_language`: Source language (default: auto)
     - `target_language`: Target language for translation (default: en)
 
+## Settings UI
+### Description of Settings
+
+1. **Silence Threshold:**
+   - **Description:** The minimum average audio level required to detect speech. Lower values will make the system more sensitive to quieter sounds.
+   - **Range:** 0.0 to 1.0
+   - **Default Value:** 0.6
+
+2. **Silence Duration (ms):**
+   - **Description:** The duration of silence (in milliseconds) required to stop recording and process the audio. Longer values will allow for more natural pauses in speech.
+   - **Range:** 100ms to 2000ms
+   - **Default Value:** 300ms
+
+3. **Max Audio Level Threshold:**
+   - **Description:** The maximum audio level required to process the audio. If the detected audio level exceeds this threshold, the audio will be sent to the server for transcription.
+   - **Range:** 1 to 128
+   - **Default Value:** 10
+
+4. **Transcript View Layout:**
+   - **Description:** Choose between a detailed or compact view for the transcribed text. The detailed view shows both the original and translated text, while the compact view shows only the translated text.
+   - **Options:**
+     - Detailed
+     - Compact (default)
+   - **Default Value:** Compact
+
+5. **Debug Mode:**
+   - **Description:** Enable debug mode to show additional information about the audio levels and processing.
+   - **Default Value:** Disabled
+
+6. **Source Language:**
+   - **Description:** The language of the incoming audio. Set to "auto" for automatic language detection.
+   - **Options:**
+     - Auto-detect
+     - English (en)
+     - Spanish (es)
+     - French (fr)
+     - German (de)
+     - Italian (it)
+     - Japanese (ja)
+     - Korean (ko)
+     - Chinese (zh)
+   - **Default Value:** Auto-detect
+
+7. **Target Language:**
+   - **Description:** The language to which the transcribed text will be translated.
+   - **Options:**
+     - English (en)
+     - Spanish (es)
+     - French (fr)
+     - German (de)
+     - Italian (it)
+     - Japanese (ja)
+     - Korean (ko)
+     - Chinese (zh)
+   - **Default Value:** English (en)
+
+8. **Enable Translation:**
+   - **Description:** Enable or disable the translation of the transcribed text.
+   - **Default Value:** Enabled
+
 ## Technologies
 - FastAPI
 - Python
