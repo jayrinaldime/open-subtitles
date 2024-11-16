@@ -244,6 +244,7 @@ function stopRecording() {
         mediaRecorder.stop();
     }
     updateAudioLevelVisibility();
+    document.getElementById('exportButtonContainer').style.display = 'block'; // Show the export button
 }
 
 function sendAudioToServer(audioBlob) {
