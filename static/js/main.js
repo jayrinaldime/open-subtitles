@@ -352,7 +352,7 @@ function exportTranscript() {
         const timestamp = entry.querySelector('.timestamp').textContent;
         const originalText = entry.querySelector('.original-text').textContent;
         const translatedText = entry.querySelector('.translated-text').textContent;
-        transcriptText += `${timestamp} Original: ${originalText} Translated: ${translatedText}\n`;
+        transcriptText += `${timestamp} Original: ${originalText} Translated: ${translatedText}\n\n`;
     });
 
     const blob = new Blob([transcriptText], { type: 'text/plain' });
