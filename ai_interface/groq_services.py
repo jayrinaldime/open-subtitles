@@ -45,4 +45,4 @@ class GroqTranslationService(TranslationService):
         response = await self.client.chat.completions.create(
             model=self.LLM_CHAT_MODEL, messages=messages
         )
-        return response.choices[0].message.content.strip()
+        return response.choices[0].message.content

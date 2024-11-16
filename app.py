@@ -71,7 +71,7 @@ async def transcribe(
     max_audio_level: float = Form(...),
     source_language: str = Form(default="auto"),
     target_language: str = Form(default="en"),
-    enable_translation: bool = Form(default=True)
+    enable_translation: bool = Form(default=True),
 ):
     supported_formats = [
         "flac",
@@ -105,15 +105,20 @@ async def transcribe(
         transcription = await transcription_service.transcribe(
             audio_content, file_extension, source_language
         )
+        transcription = transcription.strip()
 
         # Perform translation if enabled
-        if enable_translation:
-            translation = await translation_service.translate(transcription, target_language)
-            translated_text = translation
+        if enable_translation and transcription != "":
+            translation = await translation_service.translate(
+                transcription, target_language
+            )
+            translated_text = translation.strip()
         else:
             translated_text = transcription
 
-        return TranscriptionResponse(original_text=transcription, translated_text=translated_text)
+        return TranscriptionResponse(
+            original_text=transcription, translated_text=translated_text
+        )
 
     except Exception as e:
         logger.error(f"Error processing audio: {e}")
@@ -123,6 +128,8 @@ async def transcribe(
         # Delete the audio content after transcription
         del audio_content
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -2,6 +2,7 @@ import os
 from openai import AsyncOpenAI
 from .abstract_services import TranscriptionService, TranslationService
 
+
 class OpenAITranscriptionService(TranscriptionService):
     def __init__(self):
         self.client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
@@ -20,6 +21,7 @@ class OpenAITranscriptionService(TranscriptionService):
             **optional_params
         )
         return transcription
+
 
 class OpenAITranslationService(TranslationService):
     def __init__(self):
@@ -42,4 +44,4 @@ class OpenAITranslationService(TranslationService):
         response = await self.client.chat.completions.create(
             model=self.LLM_CHAT_MODEL, messages=messages
         )
-        return response.choices[0].message.content.strip()
+        return response.choices[0].message.content
