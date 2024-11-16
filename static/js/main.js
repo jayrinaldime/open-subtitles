@@ -236,6 +236,7 @@ function startRecording() {
     startContinuousRecording();
     isRecording = true;
     updateAudioLevelVisibility();
+    document.getElementById('exportButtonContainer').style.display = 'none'; // Hide the export button
 }
 
 function stopRecording() {
@@ -331,6 +332,7 @@ function updateTranscriptLayout() {
 document.getElementById('clearTranscript').addEventListener('click', function() {
     if (confirm('Are you sure you want to discard the transcript?')) {
         document.getElementById('transcriptionContainer').innerHTML = '';
+        document.getElementById('exportButtonContainer').style.display = 'none'; // Hide the export button
     }
 });
 
