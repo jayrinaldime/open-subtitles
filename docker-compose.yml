@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    image: ghcr.io/jayrinaldime/open-subtitles:latest
+    environment:
+      - OPENAI_API_KEY=your_openai_api_key_here
+      - TRANSCRIPTION_PROVIDER=openai
+      - TRANSLATION_PROVIDER=openai
+      - LOG_LEVEL=INFO
+      - MAX_RETRIES=3
+      - API_TIMEOUT=30
+      - API_BASE_URL=https://api.openai.com
+      - LLM_STT_MODEL=whisper-1
+      - LLM_CHAT_MODEL=gpt-3.5-turbo
+      - SYSTEM_PROMPT_TRANSLATE=You are a helpful translator. Translate the text to the {LANGUAGE} language and only return the translated text. Do **not** state the original input and do **NOT** summarize!
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./static:/app/static
+      - ./templates:/app/templates
+    depends_on:
+      - openai
+
+  openai:
+    image: openai/openai:latest
+    environment:
+      - OPENAI_API_KEY=your_openai_api_key_here
+    ports:
+      - "8080:8080"
