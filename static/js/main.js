@@ -355,8 +355,8 @@ function exportTranscript() {
 
     sortedEntries.forEach(entry => {
         const timestamp = entry.querySelector('.timestamp').textContent;
-        const originalText = entry.querySelector('.original-text').textContent.replace(/^Original: /, "");
-        const translatedText = entry.querySelector('.translated-text').textContent;
+        const originalText = entry.querySelector('.original-text').textContent.replace(/^Original: /, "").trim();
+        const translatedText = entry.querySelector('.translated-text').textContent.trim();
         transcriptText += `${timestamp}\n${translatedText}\n------\n${originalText}\n\n`;
     });
 
