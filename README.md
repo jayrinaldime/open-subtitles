@@ -43,20 +43,42 @@ This is a web-based application that provides close to real-time audio transcrip
    ```
 4. Copy `.env.template` to `.env` and configure your API keys
 
-## Environment Configuration
-Configure your `.env` file with the following variables:
-- `TRANSCRIPTION_PROVIDER`: Choose transcription provider (default: openai)
-- `TRANSLATION_PROVIDER`: Choose translation provider (openai, groq, ollama)
-- API keys for respective providers
+## Deployment
+### Docker Deployment
+This project can be deployed using Docker. The Docker image for the application is available at `ghcr.io/jayrinaldime/open-subtitles:latest`.
 
-## Running the Application
-```bash
-python app.py
-```
-Or using Uvicorn:
-```bash
-uvicorn app:app --host 0.0.0.0 --port 8000
-```
+#### Using Docker Compose
+We provide sample Docker Compose files for different configurations:
+
+- **Docker Compose for Local Deployment (Using Ollama):**
+  ```bash
+  docker-compose -f docker-compose-local-ollama.yml up
+  ```
+
+- **Docker Compose for OpenAI Deployment:**
+  ```bash
+  docker-compose -f docker-compose-openai.yml up
+  ```
+
+- **Docker Compose for Groq Deployment:**
+  ```bash
+  docker-compose -f docker-compose-groq.yml up
+  ```
+
+### Running the Application
+- Without Docker:
+  ```bash
+  python app.py
+  ```
+  Or using Uvicorn:
+  ```bash
+  uvicorn app:app --host 0.0.0.0 --port 8000
+  ```
+
+- With Docker:
+  ```bash
+  docker run -p 8000:8000 ghcr.io/jayrinaldime/open-subtitles:latest
+  ```
 
 ## How It Works
 1. Open the web application in a browser
