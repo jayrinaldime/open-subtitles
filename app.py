@@ -105,12 +105,13 @@ async def transcribe(
         transcription = await transcription_service.transcribe(
             audio_content, file_extension, source_language
         )
-
+       
         # Delete the audio content after transcription
         del audio_content
 
         # Check if transcription is empty
-        if not transcription.strip():
+        transcription = transcription.strip()
+        if not transcription:
             return {"original_text": "", "translated_text": ""}
 
         # Translate the transcribed text to the target language
@@ -121,8 +122,6 @@ async def transcribe(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 if __name__ == "__main__":
     import uvicorn
-
     uvicorn.run(app, host="0.0.0.0", port=8000)

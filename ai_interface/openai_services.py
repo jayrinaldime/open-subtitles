@@ -21,26 +21,6 @@ class OpenAITranscriptionService(TranscriptionService):
         )
         return transcription
 
-class LocalTranscriptionService(TranscriptionService):
-    def __init__(self):
-        self.base_url = os.environ.get("LOCAL_TRANSCRIPTION_BASE_URL") or "https://api.openai.com/v1"  # Default to OpenAI API
-        self.client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"), base_url=self.base_url)
-        self.LLM_STT_MODEL = os.environ.get("LLM_STT_MODEL") or "whisper-1"
-
-    async def transcribe(
-        self, audio_content: bytes, file_extension: str, source_language: str = "auto"
-    ) -> str:
-        optional_params = (
-            {"language": source_language} if source_language != "auto" else {}
-        )
-        transcription = await self.client.audio.transcriptions.create(
-            model=self.LLM_STT_MODEL,
-            file=("audio.{}".format(file_extension), audio_content),
-            response_format="text",
-            **optional_params
-        )
-        return transcription
-
 class OpenAITranslationService(TranslationService):
     def __init__(self):
         self.client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))

@@ -26,3 +26,28 @@ class OllamaTranslationService(TranslationService):
 
         response = await self.client.generate(model=self.model, prompt=prompt)
         return response["response"].strip()
+
+
+class LocalTranscriptionService(TranscriptionService):
+    def __init__(self):
+        self.endpoint_url = os.environ["LOCAL_TRANSCRIPTION_ENDPOINT"]
+
+    async def transcribe(
+        self, audio_content: bytes, file_extension: str, source_language: str = "auto"
+    ) -> str:
+        data = {
+            "task": "transcribe",
+            "output": "txt"
+        }
+
+        # Open file in binary mode
+        files = {'audio_file': audio_content}
+
+        # Send POST request with file
+        if source_language != "auto":
+            data["language"] = source_language
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(self.endpoint_url, params=data, files=files)
+
+        return response.text
