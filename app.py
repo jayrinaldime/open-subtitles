@@ -32,7 +32,6 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-
 # Dictionary mapping language codes to full names
 LANGUAGE_NAMES = {
     "en": "English",
@@ -72,6 +71,7 @@ async def transcribe(
     max_audio_level: float = Form(...),
     source_language: str = Form(default="auto"),
     target_language: str = Form(default="en"),
+    enable_translation: bool = Form(default=True)
 ):
     supported_formats = [
         "flac",
@@ -108,20 +108,3 @@ async def transcribe(
        
         # Delete the audio content after transcription
         del audio_content
-
-        # Check if transcription is empty
-        transcription = transcription.strip()
-        if not transcription:
-            return {"original_text": "", "translated_text": ""}
-
-        # Translate the transcribed text to the target language
-        language_name = LANGUAGE_NAMES[target_language]
-        translation = await translation_service.translate(transcription, language_name)
-
-        return {"original_text": transcription, "translated_text": translation}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -7,12 +7,13 @@ let silenceDuration = 300;
 let isSilent = true;
 let audioLevelUpdateInterval;
 let currentAudioLevel = 0;
-let maxAudioLevel = 0
+let maxAudioLevel = 0;
 let maxAudioLevelThreshold = 10;
 let transcriptLayout = 'compact';
 let debugMode = false;
 let sourceLanguage = 'auto';
 let targetLanguage = 'en';
+let enableTranslation = true;
 
 const toggleRecordingButton = document.getElementById('toggleRecording');
 toggleRecordingButton.addEventListener('click', toggleRecording);
@@ -26,7 +27,8 @@ function saveSettings() {
         transcriptLayout,
         debugMode,
         sourceLanguage,
-        targetLanguage
+        targetLanguage,
+        enableTranslation
     }));
 }
 
@@ -40,6 +42,7 @@ function loadSettings() {
         debugMode = savedSettings.debugMode;
         sourceLanguage = savedSettings.sourceLanguage || 'auto';
         targetLanguage = savedSettings.targetLanguage || 'en';
+        enableTranslation = savedSettings.enableTranslation || true;
 
         document.getElementById('maxAudioLevelThreshold').value = maxAudioLevelThreshold;
         document.getElementById('maxAudioLevelThresholdValue').textContent = maxAudioLevelThreshold;
@@ -51,6 +54,7 @@ function loadSettings() {
         document.getElementById('debugMode').checked = debugMode;
         document.getElementById('sourceLanguage').value = sourceLanguage;
         document.getElementById('targetLanguage').value = targetLanguage;
+        document.getElementById('enableTranslation').checked = enableTranslation;
         updateAudioLevelVisibility();
         updateTranscriptLayout();
     }
@@ -93,6 +97,10 @@ document.getElementById('debugMode').addEventListener('change', function() {
     updateAudioLevelVisibility();
     saveSettings();
 });
+document.getElementById('enableTranslation').addEventListener('change', function() {
+    enableTranslation = this.checked;
+    saveSettings();
+});
 
 function updateAudioLevelVisibility() {
     const audioLevelContainer = document.getElementById('audioLevelContainer');
@@ -115,8 +123,8 @@ function startContinuousRecording() {
         .then(stream => {
             mediaRecorder = new MediaRecorder(stream);
             isRecording = true;
-            isSilent = true
-            maxAudioLevel = 0
+            isSilent = true;
+            maxAudioLevel = 0;
 
             mediaRecorder.ondataavailable = (event) => {
                 audioChunks.push(event.data);
@@ -195,7 +203,7 @@ function detectSilence(stream) {
                 }, silenceDuration);
             }
         } else {
-            isSilent = false
+            isSilent = false;
             clearTimeout(silenceDetectionTimer);
             silenceDetectionTimer = null;
         }
@@ -248,6 +256,7 @@ function sendAudioToServer(audioBlob) {
     formData.append('max_audio_level', maxAudioLevel.toFixed(2));
     formData.append('source_language', sourceLanguage);
     formData.append('target_language', targetLanguage);
+    formData.append('enable_translation', enableTranslation);
 
     fetch('/transcribe', {
         method: 'POST',
@@ -255,10 +264,10 @@ function sendAudioToServer(audioBlob) {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.translated_text && data.translated_text.trim() !== '') {
+        if (enableTranslation && data.translated_text && data.translated_text.trim() !== '') {
             addTranscriptionToUI(data.original_text, data.translated_text);
-        } else if (data.translated_text !== undefined) {
-            console.debug('Received blank translation, skipping UI update:', data);
+        } else if (!enableTranslation && data.original_text && data.original_text.trim() !== '') {
+            addTranscriptionToUI(data.original_text, data.original_text);
         } else if (data.error) {
             console.error('Error:', data.error);
         }
@@ -309,8 +318,8 @@ function updateTranscriptLayout() {
         
         if (transcriptLayout === 'detailed') {
             originalText.style.display = 'block';
-            originalText.textContent = 'Original: ' +entry.dataset.originalText;
-            translatedText.textContent =  entry.dataset.translatedText;
+            originalText.textContent = 'Original: ' + entry.dataset.originalText;
+            translatedText.textContent = entry.dataset.translatedText;
         } else { // compact layout
             originalText.style.display = 'none';
             translatedText.textContent = entry.dataset.translatedText;
