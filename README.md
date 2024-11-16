@@ -42,6 +42,9 @@ This is a web-based application that provides close to real-time audio transcrip
    pip install -r requirements.txt
    ```
 4. Copy `.env.template` to `.env` and configure your API keys
+   ```bash
+   cp .env.template .env
+   ```
 
 ## Deployment
 ### Docker Deployment
