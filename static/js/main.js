@@ -332,3 +332,35 @@ document.getElementById('clearTranscript').addEventListener('click', function() 
         document.getElementById('transcriptionContainer').innerHTML = '';
     }
 });
+
+// Add the export button event listener
+document.getElementById('exportTranscript').addEventListener('click', exportTranscript);
+
+// Function to export the transcript as a text file
+function exportTranscript() {
+    const container = document.getElementById('transcriptionContainer');
+    const entries = container.getElementsByClassName('transcription-entry');
+    let transcriptText = '';
+
+    // Convert the HTMLCollection to an array and sort by the order they appear in the DOM
+    const sortedEntries = Array.from(entries).sort((a, b) => {
+        return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+    });
+
+    sortedEntries.forEach(entry => {
+        const timestamp = entry.querySelector('.timestamp').textContent;
+        const originalText = entry.querySelector('.original-text').textContent;
+        const translatedText = entry.querySelector('.translated-text').textContent;
+        transcriptText += `${timestamp} Original: ${originalText} Translated: ${translatedText}\n`;
+    });
+
+    const blob = new Blob([transcriptText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = 'transcript.txt';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+}
