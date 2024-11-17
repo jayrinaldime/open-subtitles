@@ -45,7 +45,11 @@ function loadSettings() {
         debugMode = savedSettings.debugMode;
         sourceLanguage = savedSettings.sourceLanguage || 'auto';
         targetLanguage = savedSettings.targetLanguage || 'en';
-        enableTranslation = savedSettings.enableTranslation || true;
+        enableTranslation = savedSettings.enableTranslation !== undefined 
+            ? savedSettings.enableTranslation 
+            : true;
+
+        document.getElementById('enableTranslation').checked = enableTranslation;
 
         document.getElementById('maxAudioLevelThreshold').value = maxAudioLevelThreshold;
         document.getElementById('maxAudioLevelThresholdValue').textContent = maxAudioLevelThreshold;
