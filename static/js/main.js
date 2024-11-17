@@ -275,6 +275,7 @@ function sendAudioToServer(audioBlob) {
 
     isTranscribing = true;
     const formData = new FormData();
+    formData.append('enable_translation', enableTranslation);  // Add this line
     formData.append('audio', audioBlob, 'audio.wav');
     formData.append('audio_level', currentAudioLevel.toFixed(2));
     formData.append('max_audio_level', maxAudioLevel.toFixed(2));

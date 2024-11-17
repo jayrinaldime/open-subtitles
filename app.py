@@ -132,7 +132,9 @@ async def transcribe(
 
 @app.post("/translate", response_model=TranscriptionResponse)
 async def translate_text(
-    text: str = Form(...), target_language: str = Form(default="en")
+    text: str = Form(...), 
+    target_language: str = Form(default="en"),
+    enable_translation: bool = Form(default=True)
 ):
     try:
         translation = await translation_service.translate(text, target_language)
