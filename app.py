@@ -129,12 +129,18 @@ async def transcribe(
         del audio_content
         
 @app.post("/translate")
+@app.post("/translate", response_model=TranscriptionResponse)
 async def translate_text(
     text: str = Form(...),
     target_language: str = Form(default="en")
 ):
     try:
+    try:
         translation = await translation_service.translate(text, target_language)
+        return TranscriptionResponse(
+            original_text=text, 
+            translated_text=translation.strip()
+        )
         return {"translated_text": translation.strip()}
     except Exception as e:
         logger.error(f"Error translating text: {e}")
