@@ -365,35 +365,20 @@ function addTranscriptionToUI(originalText, translatedText) {
     updateTranscriptLayout();
     updateExportButtonVisibility();
 }
-    const container = document.getElementById('transcriptionContainer');
-    const transcriptionElement = document.createElement('div');
-    transcriptionElement.className = 'transcription-entry';
-    
-    const timestamp = new Date().toLocaleTimeString();
-    const timestampElement = document.createElement('span');
-    timestampElement.className = 'timestamp';
-    timestampElement.textContent = timestamp + ': ';
-    
-    const originalTextElement = document.createElement('p');
-    originalTextElement.className = 'original-text';
-    originalTextElement.textContent = originalText;
-    originalTextElement.style.display = transcriptLayout === 'detailed' ? 'block' : 'none';
-    
-    const translatedTextElement = document.createElement('p');
-    translatedTextElement.className = 'translated-text';
-    translatedTextElement.textContent = translatedText;
-    
-    transcriptionElement.appendChild(timestampElement);
-    transcriptionElement.appendChild(translatedTextElement);
-    transcriptionElement.appendChild(originalTextElement);
-    
-    // Store the original and translated text as data attributes
-    transcriptionElement.dataset.originalText = originalText;
-    transcriptionElement.dataset.translatedText = translatedText;
-    
-    container.insertBefore(transcriptionElement, container.firstChild);
-    updateTranscriptLayout();
-}
+
+function updateExportButtonVisibility() {                                                  
+    const container = document.getElementById('transcriptionContainer');                   
+    const entries = container.getElementsByClassName('transcription-entry');               
+    const exportButtonContainer = document.getElementById('exportButtonContainer');        
+                                                                                           
+    // Show export button only if there are transcription entries      
+    if (isRecording) {
+        exportButtonContainer.style.display = 'none';
+    }                   
+    else {
+    exportButtonContainer.style.display = entries.length > 0 ? 'block' : 'none';   
+    }        
+} 
 
 function updateTranscriptLayout() {
     const container = document.getElementById('transcriptionContainer');
