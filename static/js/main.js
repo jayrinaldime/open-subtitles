@@ -15,6 +15,7 @@ let sourceLanguage = 'auto';
 let targetLanguage = 'en';
 let enableTranslation = true;
 let isTranscribing = false; // New flag to prevent multiple simultaneous transcriptions
+let audioQueue = []; // New queue to store audio blobs
 
 const toggleRecordingButton = document.getElementById('toggleRecording');
 toggleRecordingButton.addEventListener('click', toggleRecording);
@@ -252,7 +253,19 @@ function stopRecording() {
 }
 
 function sendAudioToServer(audioBlob) {
-    if (maxAudioLevel < maxAudioLevelThreshold || isTranscribing) {
+    // If transcribing, add to queue instead of immediate processing
+    if (isTranscribing) {
+        audioQueue.push(audioBlob);
+        return;
+    }
+
+    // If not transcribing and no audio blob, check queue
+    if (!audioBlob && audioQueue.length > 0) {
+        audioBlob = audioQueue.shift();
+    }
+
+    // Skip if no audio or below threshold
+    if (!audioBlob || maxAudioLevel < maxAudioLevelThreshold) {
         return;
     }
 
@@ -284,6 +297,11 @@ function sendAudioToServer(audioBlob) {
     })
     .finally(() => {
         isTranscribing = false;
+        
+        // Immediately process next queued audio if available
+        if (audioQueue.length > 0) {
+            sendAudioToServer(); // Call without argument to process queue
+        }
     });
 }
 
