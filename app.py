@@ -137,9 +137,18 @@ async def translate_text(
     enable_translation: bool = Form(default=True)
 ):
     try:
-        translation = await translation_service.translate(text, target_language)
-        return TranscriptionResponse(
-            original_text=text, translated_text=translation.strip()
+        # Only translate if translation is enabled
+        if enable_translation:
+            translation = await translation_service.translate(text, target_language)
+            return TranscriptionResponse(
+                original_text=text, 
+                translated_text=translation.strip()
+            )
+        else:
+            # If translation is disabled, return original text
+            return TranscriptionResponse(
+                original_text=text, 
+                translated_text=text
         )
         return {"translated_text": translation.strip()}
     except Exception as e:
