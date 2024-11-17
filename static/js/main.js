@@ -14,6 +14,7 @@ let debugMode = false;
 let sourceLanguage = 'auto';
 let targetLanguage = 'en';
 let enableTranslation = true;
+let isTranscribing = false; // New flag to prevent multiple simultaneous transcriptions
 
 const toggleRecordingButton = document.getElementById('toggleRecording');
 toggleRecordingButton.addEventListener('click', toggleRecording);
@@ -251,9 +252,11 @@ function stopRecording() {
 }
 
 function sendAudioToServer(audioBlob) {
-    if (maxAudioLevel < maxAudioLevelThreshold) {
+    if (maxAudioLevel < maxAudioLevelThreshold || isTranscribing) {
         return;
     }
+
+    isTranscribing = true;
     const formData = new FormData();
     formData.append('audio', audioBlob, 'audio.wav');
     formData.append('audio_level', currentAudioLevel.toFixed(2));
@@ -278,6 +281,9 @@ function sendAudioToServer(audioBlob) {
     })
     .catch(error => {
         console.error('Error:', error);
+    })
+    .finally(() => {
+        isTranscribing = false;
     });
 }
 
