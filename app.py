@@ -132,24 +132,20 @@ async def transcribe(
 
 @app.post("/translate", response_model=TranscriptionResponse)
 async def translate_text(
-    text: str = Form(...), 
+    text: str = Form(...),
     target_language: str = Form(default="en"),
-    enable_translation: bool = Form(default=True)
+    enable_translation: bool = Form(default=True),
 ):
     try:
         # Only translate if translation is enabled
         if enable_translation:
             translation = await translation_service.translate(text, target_language)
             return TranscriptionResponse(
-                original_text=text, 
-                translated_text=translation.strip()
+                original_text=text, translated_text=translation.strip()
             )
         else:
             # If translation is disabled, return original text
-            return TranscriptionResponse(
-                original_text=text, 
-                translated_text=text
-        )
+            return TranscriptionResponse(original_text=text, translated_text=text)
         return {"translated_text": translation.strip()}
     except Exception as e:
         logger.error(f"Error translating text: {e}")
@@ -159,4 +155,4 @@ async def translate_text(
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)

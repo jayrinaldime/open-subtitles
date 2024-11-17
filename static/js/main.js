@@ -464,6 +464,7 @@ function mergeTranscriptionEntries(currentEntry) {
     const formData = new FormData();
     formData.append('text', concatenatedText);
     formData.append('target_language', targetLanguage);
+    formData.append('enable_translation', enableTranslation);
 
     // Call translation endpoint
     fetch('/translate', {
