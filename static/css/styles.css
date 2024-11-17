@@ -45,6 +45,7 @@ button:disabled {
 }
 
 .transcription-entry {
+    position: relative; /* Add this */
     background-color: #e9e9e9;
     padding: 10px;
     border-radius: 4px;
@@ -52,6 +53,7 @@ button:disabled {
 }
 
 .timestamp {
+    display: inline-block; /* Ensure consistent layout */
     font-weight: bold;
     color: #555;
     margin-right: 10px;
@@ -143,9 +145,11 @@ button:focus, input:focus, select:focus {
     100% { opacity: 0; }
 }
 .transcription-actions {
+    position: absolute; /* Change to absolute positioning */
+    top: 10px; /* Align with the top of the entry */
+    right: 10px; /* Align to the right side */
     display: flex;
     gap: 5px;
-    margin-top: 5px;
 }
 
 .delete-entry, .merge-entry {
