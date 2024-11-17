@@ -127,12 +127,7 @@ async def transcribe(
     finally:
         # Delete the audio content after transcription
         del audio_content
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+        
 @app.post("/translate")
 async def translate_text(
     text: str = Form(...),
@@ -144,3 +139,9 @@ async def translate_text(
     except Exception as e:
         logger.error(f"Error translating text: {e}")
         raise HTTPException(status_code=500, detail="Error translating text")
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
