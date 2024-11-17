@@ -446,7 +446,7 @@ function exportTranscript() {
 }
 function mergeTranscriptionEntries(currentEntry) {
     const container = document.getElementById('transcriptionContainer');
-    const previousEntry = currentEntry.previousElementSibling;
+    const previousEntry = currentEntry.nextElementSibling;
 
     if (!previousEntry) {
         alert('No previous entry to merge with.');

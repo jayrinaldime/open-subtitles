@@ -105,7 +105,8 @@ async def transcribe(
         transcription = await transcription_service.transcribe(
             audio_content, file_extension, source_language
         )
-        transcription = transcription.strip()
+
+        transcription = str(transcription).strip()
 
         # Perform translation if enabled
         if enable_translation and transcription != "":
@@ -127,27 +128,24 @@ async def transcribe(
     finally:
         # Delete the audio content after transcription
         del audio_content
-        
-@app.post("/translate")
+
+
 @app.post("/translate", response_model=TranscriptionResponse)
 async def translate_text(
-    text: str = Form(...),
-    target_language: str = Form(default="en")
+    text: str = Form(...), target_language: str = Form(default="en")
 ):
-    try:
     try:
         translation = await translation_service.translate(text, target_language)
         return TranscriptionResponse(
-            original_text=text, 
-            translated_text=translation.strip()
+            original_text=text, translated_text=translation.strip()
         )
         return {"translated_text": translation.strip()}
     except Exception as e:
         logger.error(f"Error translating text: {e}")
         raise HTTPException(status_code=500, detail="Error translating text")
 
+
 if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
