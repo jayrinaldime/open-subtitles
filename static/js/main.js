@@ -332,6 +332,57 @@ function addTranscriptionToUI(originalText, translatedText) {
     translatedTextElement.className = 'translated-text';
     translatedTextElement.textContent = translatedText;
     
+    // Create action buttons
+    const actionContainer = document.createElement('div');
+    actionContainer.className = 'transcription-actions';
+    
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = '🗑️';
+    deleteButton.className = 'delete-entry';
+    deleteButton.addEventListener('click', () => {
+        container.removeChild(transcriptionElement);
+        updateExportButtonVisibility();
+    });
+    
+    const mergeButton = document.createElement('button');
+    mergeButton.textContent = '🔗';
+    mergeButton.className = 'merge-entry';
+    mergeButton.addEventListener('click', () => mergeTranscriptionEntries(transcriptionElement));
+    
+    actionContainer.appendChild(deleteButton);
+    actionContainer.appendChild(mergeButton);
+    
+    transcriptionElement.appendChild(timestampElement);
+    transcriptionElement.appendChild(translatedTextElement);
+    transcriptionElement.appendChild(originalTextElement);
+    transcriptionElement.appendChild(actionContainer);
+    
+    // Store the original and translated text as data attributes
+    transcriptionElement.dataset.originalText = originalText;
+    transcriptionElement.dataset.translatedText = translatedText;
+    
+    container.insertBefore(transcriptionElement, container.firstChild);
+    updateTranscriptLayout();
+    updateExportButtonVisibility();
+}
+    const container = document.getElementById('transcriptionContainer');
+    const transcriptionElement = document.createElement('div');
+    transcriptionElement.className = 'transcription-entry';
+    
+    const timestamp = new Date().toLocaleTimeString();
+    const timestampElement = document.createElement('span');
+    timestampElement.className = 'timestamp';
+    timestampElement.textContent = timestamp + ': ';
+    
+    const originalTextElement = document.createElement('p');
+    originalTextElement.className = 'original-text';
+    originalTextElement.textContent = originalText;
+    originalTextElement.style.display = transcriptLayout === 'detailed' ? 'block' : 'none';
+    
+    const translatedTextElement = document.createElement('p');
+    translatedTextElement.className = 'translated-text';
+    translatedTextElement.textContent = translatedText;
+    
     transcriptionElement.appendChild(timestampElement);
     transcriptionElement.appendChild(translatedTextElement);
     transcriptionElement.appendChild(originalTextElement);
