@@ -18,6 +18,7 @@ let enableTranslation = true;
 const toggleRecordingButton = document.getElementById('toggleRecording');
 toggleRecordingButton.addEventListener('click', toggleRecording);
 document.getElementById('settingsButton').addEventListener('click', toggleSettings);
+document.getElementById('processNow').addEventListener('click', processCurrentAudio);
 
 function saveSettings() {
     localStorage.setItem('audioTranscribeSettings', JSON.stringify({
@@ -230,6 +231,7 @@ function updateRecordingState() {
     toggleRecordingButton.setAttribute('aria-pressed', isRecording);
     toggleRecordingButton.textContent = isRecording ? 'Stop Recording' : 'Start Recording';
     recordingIndicator.style.display = isRecording ? 'inline-block' : 'none';
+    document.getElementById('processNow').style.display = isRecording ? 'inline-block' : 'none';
 }
 
 function startRecording() {
@@ -277,6 +279,14 @@ function sendAudioToServer(audioBlob) {
     .catch(error => {
         console.error('Error:', error);
     });
+}
+
+function processCurrentAudio() {
+    if (audioChunks.length > 0 && maxAudioLevel >= maxAudioLevelThreshold) {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        sendAudioToServer(audioBlob);
+        audioChunks = []; // Clear the audio chunks after processing
+    }
 }
 
 function addTranscriptionToUI(originalText, translatedText) {
