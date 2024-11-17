@@ -133,3 +133,14 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
+@app.post("/translate")
+async def translate_text(
+    text: str = Form(...),
+    target_language: str = Form(default="en")
+):
+    try:
+        translation = await translation_service.translate(text, target_language)
+        return {"translated_text": translation.strip()}
+    except Exception as e:
+        logger.error(f"Error translating text: {e}")
+        raise HTTPException(status_code=500, detail="Error translating text")

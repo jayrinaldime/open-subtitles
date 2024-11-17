@@ -444,3 +444,55 @@ function exportTranscript() {
     downloadLink.click();
     document.body.removeChild(downloadLink);
 }
+function mergeTranscriptionEntries(currentEntry) {
+    const container = document.getElementById('transcriptionContainer');
+    const previousEntry = currentEntry.previousElementSibling;
+
+    if (!previousEntry) {
+        alert('No previous entry to merge with.');
+        return;
+    }
+
+    const previousOriginalText = previousEntry.dataset.originalText;
+    const currentOriginalText = currentEntry.dataset.originalText;
+
+    // Concatenate texts with previous message first
+    const concatenatedText = `${previousOriginalText} ${currentOriginalText}`;
+
+    // Prepare data for translation
+    const formData = new FormData();
+    formData.append('text', concatenatedText);
+    formData.append('target_language', targetLanguage);
+
+    // Call translation endpoint
+    fetch('/translate', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Update previous entry with merged and translated text
+        previousEntry.dataset.originalText = concatenatedText;
+        previousEntry.dataset.translatedText = data.translated_text;
+        
+        // Update the displayed text based on current layout
+        const translatedTextElement = previousEntry.querySelector('.translated-text');
+        const originalTextElement = previousEntry.querySelector('.original-text');
+        
+        translatedTextElement.textContent = data.translated_text;
+        
+        if (transcriptLayout === 'detailed') {
+            originalTextElement.textContent = `Original: ${concatenatedText}`;
+        }
+
+        // Remove the current entry
+        container.removeChild(currentEntry);
+        
+        // Update export button visibility
+        updateExportButtonVisibility();
+    })
+    .catch(error => {
+        console.error('Error merging and translating:', error);
+        alert('Failed to merge and translate entries.');
+    });
+}
