@@ -1,7 +1,7 @@
 import os
 from .abstract_services import TranslationService, TranscriptionService
 from ollama import AsyncClient
-
+import httpx
 
 class LocalTranscriptionService(TranscriptionService):
     def __init__(self):
