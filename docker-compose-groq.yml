@@ -7,5 +7,6 @@ services:
       - TRANSLATION_PROVIDER=groq
       - LLM_STT_MODEL=whisper-large-v3
       - LLM_CHAT_MODEL=llama-3.2-3b-preview
+      - LOG_LEVEL=ERROR
     ports:
       - "8000:8000"

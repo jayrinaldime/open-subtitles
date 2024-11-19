@@ -16,5 +16,7 @@ COPY src .
 # Expose the port the app runs on (FastAPI default is 8000)
 EXPOSE 8000
 
+ENV LOG_LEVEL=ERROR
+
 # Run the application
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]

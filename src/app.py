@@ -104,6 +104,8 @@ async def transcribe(
 
             # Read the content of the uploaded file
             audio_content = await audio.read()
+            audio_byte_size = len(audio_content)
+            logger.info(f"Audio buffer size: {audio_byte_size}")
 
             # Use the content for transcription
             with executionLogger.log("Transcribe Service") as transcribeLogger:

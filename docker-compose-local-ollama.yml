@@ -10,6 +10,7 @@ services:
       - LLM_CHAT_MODEL=llama2
       - SYSTEM_PROMPT_TRANSLATE=You are a helpful translator. Translate the text to the {LANGUAGE} language and only return the translated text. Do **not** state the original input and do **NOT** summarize!
       - LOCAL_TRANSCRIPTION_ENDPOINT=http://whisper-gpu:9000/asr
+      - LOG_LEVEL=ERROR
     ports:
       - "8000:8000"
     depends_on:
