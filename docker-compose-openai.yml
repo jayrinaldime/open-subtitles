@@ -7,6 +7,7 @@ services:
       - TRANSLATION_PROVIDER=openai
       - LLM_STT_MODEL=whisper-1
       - LLM_CHAT_MODEL=gpt-3.5-turbo
+      - LOG_LEVEL=INFO  # Add this line
     ports:
       - "8000:8000"
     

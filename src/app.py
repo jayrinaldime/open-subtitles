@@ -48,7 +48,8 @@ LANGUAGE_NAMES = {
 }
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logging.basicConfig(level=getattr(logging, log_level))
 logger = logging.getLogger(__name__)
 
 # Mount the static directory
