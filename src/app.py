@@ -48,7 +48,7 @@ LANGUAGE_NAMES = {
 }
 
 # Set up logging
-log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
 logging.basicConfig(level=getattr(logging, log_level))
 logger = logging.getLogger(__name__)
 
@@ -86,7 +86,7 @@ async def transcribe(
             "mpga",
             "oga",
             "ogg",
-            "wav",      
+            "wav",
             "webm",
         ]
         file_extension = audio.filename.split(".")[-1].lower()
@@ -96,46 +96,37 @@ async def transcribe(
                 detail=f"Unsupported file format. Supported formats are: {', '.join(supported_formats)}",
             )
 
-        try:
-            # Log the audio level and providers
-            logger.info(
-                f"Received audio with average level: {audio_level}, using Transcription provider: {TRANSCRIPTION_PROVIDER}, Translation provider: {TRANSLATION_PROVIDER}"
+        # Log the audio level and providers
+        logger.info(
+            f"Received audio with average level: {audio_level}, using Transcription provider: {TRANSCRIPTION_PROVIDER}, Translation provider: {TRANSLATION_PROVIDER}"
+        )
+
+        # Read the content of the uploaded file
+        audio_content = await audio.read()
+        audio_byte_size = len(audio_content)
+        logger.info(f"Audio buffer size: {audio_byte_size}")
+
+        # Use the content for transcription
+        with executionLogger.log("Transcribe Service") as transcribeLogger:
+            transcription = await transcription_service.transcribe(
+                audio_content, file_extension, source_language
             )
 
-            # Read the content of the uploaded file
-            audio_content = await audio.read()
-            audio_byte_size = len(audio_content)
-            logger.info(f"Audio buffer size: {audio_byte_size}")
+        transcription = str(transcription).strip()
 
-            # Use the content for transcription
-            with executionLogger.log("Transcribe Service") as transcribeLogger:
-                transcription = await transcription_service.transcribe(
-                    audio_content, file_extension, source_language
+        # Perform translation if enabled
+        if enable_translation and transcription != "":
+            with executionLogger.log("Translate Service") as translateLogger:
+                translation = await translation_service.translate(
+                    transcription, target_language
                 )
+            translated_text = translation.strip()
+        else:
+            translated_text = transcription
 
-            transcription = str(transcription).strip()
-
-            # Perform translation if enabled
-            if enable_translation and transcription != "":
-                with executionLogger.log("Translate Service") as translateLogger:
-                    translation = await translation_service.translate(
-                        transcription, target_language
-                    )
-                translated_text = translation.strip()
-            else:
-                translated_text = transcription
-
-            return TranscriptionResponse(
-                original_text=transcription, translated_text=translated_text
-            )
-
-        except Exception as e:
-            logger.error(f"Error processing audio: {e}")
-            raise HTTPException(status_code=500, detail="Error processing audio")
-
-        finally:
-            # Delete the audio content after transcription
-            del audio_content
+        return TranscriptionResponse(
+            original_text=transcription, translated_text=translated_text
+        )
 
 
 @app.post("/translate", response_model=TranscriptionResponse)
@@ -149,7 +140,9 @@ async def translate_text(
             # Only translate if translation is enabled
             if enable_translation:
                 with executionLogger.log("Translate Service") as translateLogger:
-                    translation = await translation_service.translate(text, target_language)
+                    translation = await translation_service.translate(
+                        text, target_language
+                    )
                 return TranscriptionResponse(
                     original_text=text, translated_text=translation.strip()
                 )
