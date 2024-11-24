@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 import logging
 from fastapi.staticfiles import StaticFiles
@@ -17,6 +18,7 @@ app = FastAPI(title="Audio Transcribe & Translate", version=__version__)
 
 TRANSCRIPTION_PROVIDER = os.environ.get("TRANSCRIPTION_PROVIDER", "openai").lower()
 TRANSLATION_PROVIDER = os.environ.get("TRANSLATION_PROVIDER", "openai").lower()
+TRANSLATION_TIMEOUT = float(os.environ.get("TRANSLATION_TIMEOUT", 60.0))
 if TRANSLATION_PROVIDER not in ["openai", "groq", "ollama"]:
     raise ValueError(f"Unsupported translation provider: {TRANSLATION_PROVIDER}")
 
