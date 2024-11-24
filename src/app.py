@@ -118,11 +118,19 @@ async def transcribe(
 
         # Perform translation if enabled
         if enable_translation and transcription != "":
-            with executionLogger.log("Translate Service") as translateLogger:
-                translation = await translation_service.translate(
-                    transcription, target_language
-                )
-            translated_text = translation.strip()
+            try:
+                with executionLogger.log("Translate Service") as translateLogger:
+                    translation = await asyncio.wait_for(
+                        translation_service.translate(transcription, target_language), 
+                        timeout=TRANSLATION_TIMEOUT
+                    )
+                translated_text = translation.strip()
+            except asyncio.TimeoutError:
+                logger.warning(f"Translation timed out for text: {transcription[:100]}...")
+                translated_text = ""  # Set to blank string on timeout
+            except Exception as e:
+                logger.error(f"Translation error: {e}")
+                translated_text = ""  # Set to blank string on any translation error
         else:
             translated_text = transcription
 
