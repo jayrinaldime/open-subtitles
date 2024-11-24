@@ -30,6 +30,7 @@ class OllamaTranslationService(TranslationService):
     def __init__(self):
         self.model = os.environ.get("LLM_CHAT_MODEL", "llama2")
         self.host = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
+        self.max_tokens = int(os.environ.get("OLLAMA_MAX_TOKENS", 1000))
         self.client = AsyncClient(host=self.host)
         self.SYSTEM_PROMPT_TRANSLATE = (
             os.environ.get("SYSTEM_PROMPT_TRANSLATE")
