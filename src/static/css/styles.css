@@ -152,7 +152,7 @@ button:focus, input:focus, select:focus {
     gap: 5px;
 }
 
-.delete-entry, .merge-entry {
+.delete-entry, .merge-entry, .refresh-entry {
     background: none;
     border: none;
     cursor: pointer;
@@ -160,6 +160,6 @@ button:focus, input:focus, select:focus {
     padding: 2px 5px;
 }
 
-.delete-entry:hover, .merge-entry:hover {
+.delete-entry:hover, .merge-entry:hover, .refresh-entry:hover {
     background-color: rgba(0,0,0,0.1);
 }

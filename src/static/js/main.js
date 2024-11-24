@@ -341,6 +341,42 @@ function addTranscriptionToUI(originalText, translatedText) {
     const actionContainer = document.createElement('div');
     actionContainer.className = 'transcription-actions';
     
+    // New refresh button
+    const refreshButton = document.createElement('button');
+    refreshButton.textContent = '🔄';
+    refreshButton.className = 'refresh-entry';
+    refreshButton.addEventListener('click', () => {
+        // Prepare data for translation
+        const formData = new FormData();
+        formData.append('text', originalText);
+        formData.append('target_language', targetLanguage);
+        formData.append('enable_translation', enableTranslation);
+
+        fetch('/translate', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Update the entry with new translation
+            transcriptionElement.dataset.originalText = originalText;
+            transcriptionElement.dataset.translatedText = data.translated_text;
+            
+            const translatedTextElement = transcriptionElement.querySelector('.translated-text');
+            const originalTextElement = transcriptionElement.querySelector('.original-text');
+            
+            translatedTextElement.textContent = data.translated_text;
+            
+            if (transcriptLayout === 'detailed') {
+                originalTextElement.textContent = `Original: ${originalText}`;
+            }
+        })
+        .catch(error => {
+            console.error('Error refreshing translation:', error);
+            alert('Failed to refresh translation.');
+        });
+    });
+    
     const deleteButton = document.createElement('button');
     deleteButton.textContent = '🗑️';
     deleteButton.className = 'delete-entry';
@@ -354,6 +390,8 @@ function addTranscriptionToUI(originalText, translatedText) {
     mergeButton.className = 'merge-entry';
     mergeButton.addEventListener('click', () => mergeTranscriptionEntries(transcriptionElement));
     
+    // Insert refresh button before delete button
+    actionContainer.appendChild(refreshButton);
     actionContainer.appendChild(deleteButton);
     actionContainer.appendChild(mergeButton);
     
