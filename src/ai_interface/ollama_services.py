@@ -48,5 +48,9 @@ class OllamaTranslationService(TranslationService):
             + f"```text\n{text}\n```"
         )
 
-        response = await self.client.generate(model=self.model, prompt=prompt)
+        response = await self.client.generate(
+            model=self.model, 
+            prompt=prompt, 
+            options={"max_tokens": self.max_tokens}
+        )
         return response["response"]
