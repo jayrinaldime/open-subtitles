@@ -289,7 +289,7 @@ function sendAudioToServer(audioBlob) {
     })
     .then(response => response.json())
     .then(data => {
-        if (enableTranslation && data.translated_text && data.translated_text.trim() !== '') {
+        if (enableTranslation && data.original_text && data.original_text.trim() !== '') {
             addTranscriptionToUI(data.original_text, data.translated_text);
         } else if (!enableTranslation && data.original_text && data.original_text.trim() !== '') {
             addTranscriptionToUI(data.original_text, data.original_text);
